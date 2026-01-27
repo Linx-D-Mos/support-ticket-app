@@ -8,4 +8,5 @@ enum Type: string
     case REQUEST = 'request';
     case BUG = 'bug';
     case QUESTION = 'question';
+    case FEATURE = 'feature';
 }

@@ -15,7 +15,11 @@ use Database\Seeders\LabelSeeder;
 use Database\Seeders\RolSeeder;
 
 pest()->extend(Tests\TestCase::class)
- // ->use(Illuminate\Foundation\Testing\RefreshDatabase::class)
+    ->use(Illuminate\Foundation\Testing\RefreshDatabase::class)
+    ->beforeEach(function () {
+        $this->seed(RolSeeder::class);
+        $this->seed(LabelSeeder::class);
+    })
     ->in('Feature');
 
 /*

@@ -16,16 +16,14 @@ test('database relationship and models', function () {
 
     foreach (Type::cases() as $type) {
         Label::firstOrCreate([
-                'name' => $type->value
-            ], [
-                'description' => fake()->paragraph()
-            ]);
-        }
-        foreach (RolEnum::cases() as $type) {
-            Rol::firstOrCreate([
-                'name' => $type->value
-            ]);
-        }
+            'name' => $type->value
+        ], [
+            'description' => fake()->paragraph()
+        ]);
+        Rol::firstOrCreate([
+            'name' => $type->value
+        ]);
+    }
     $agent = User::factory()->create(['rol_id' => 2]);
     $customer = User::factory()->create(['rol_id' => 3]);
 

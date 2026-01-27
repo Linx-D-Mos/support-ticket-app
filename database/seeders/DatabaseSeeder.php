@@ -2,13 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Enums\RolEnum;
-use App\Enums\Type;
-use App\Models\File;
 use App\Models\Label;
-use App\Models\Rol;
-use App\Models\Ticket;
-use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -23,8 +17,8 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
 
-        $this->seed(LabelSeeder::class);
-        $this->seed(RolSeeder::class);
+        $this->call(RolSeeder::class);
+        $this->call(LabelSeeder::class);
         // $customerRolId = Rol::where('name', RolEnum::CUSTOMER->value)->firstOrFail()->id;
         // $agentRolId = Rol::where('name', RolEnum::AGENT->value)->firstOrFail()->id;
         // $customer = User::factory()->create([
