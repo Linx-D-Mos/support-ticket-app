@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class Ticket extends Model
 {
@@ -23,8 +24,8 @@ class Ticket extends Model
         'last_reply_at',
     ];
     protected $casts = [
-        'status' => status::class,
-        'priority' => priority::class,
+        'status' => Status::class,
+        'priority' => Priority::class,
     ];
     public function user(): BelongsTo
     {
@@ -40,6 +41,10 @@ class Ticket extends Model
     }
     public function labels(): BelongsToMany
     {
-        return $this->belongsToMany(Label::class);
+        return $this->belongsToMany(Label::class)->withTimestamps();
+    }
+    public function files(): MorphMany
+    {
+        return $this->morphMany(File::class, 'fileable');
     }
 }

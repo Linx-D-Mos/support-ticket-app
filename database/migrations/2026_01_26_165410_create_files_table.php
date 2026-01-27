@@ -13,8 +13,7 @@ return new class extends Migration
     {
         Schema::create('files', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('model_id');
-            $table->string('model_type');
+            $table->morphs('fileable');
             $table->string('file_path')->unique();
             $table->timestamps();
         });

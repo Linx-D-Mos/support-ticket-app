@@ -2,6 +2,8 @@
 
 namespace Database\Factories;
 
+use App\Models\Ticket;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -17,7 +19,9 @@ class AnswerFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'ticket_id' => Ticket::inRandomOrder()->first() ?? Ticket::factory()->create(),
+            'user_id' => User::inRandomOrder()->first() ?? User::factory()->create(),
+            'body' => fake()->paragraph(),
         ];
     }
 }

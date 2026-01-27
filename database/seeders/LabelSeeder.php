@@ -2,23 +2,24 @@
 
 namespace Database\Seeders;
 
-use App\Enums\RolEnum;
-use App\Models\Rol;
+use App\Enums\Type;
+use App\Models\Label;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
-class RolSeeder extends Seeder
+class LabelSeeder extends Seeder
 {
     /**
      * Run the database seeds.
      */
     public function run(): void
     {
-        foreach (RolEnum::cases() as $type) {
-            Rol::firstOrCreate([
+        foreach (Type::cases() as $type) {
+        Label::firstOrCreate([
                 'name' => $type->value
+            ], [
+                'description' => fake()->paragraph()
             ]);
         }
-
     }
 }

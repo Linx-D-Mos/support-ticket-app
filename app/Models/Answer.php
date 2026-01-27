@@ -23,6 +23,6 @@ class Answer extends Model
     }
     public function files(): MorphMany
     {
-        return $this->morphMany(File::class, 'fileables');
+        return $this->morphMany(File::class, 'fileable');
     }
 }

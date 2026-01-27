@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Enums\RolEnum;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -17,7 +18,7 @@ class RolFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'name' => fake()->unique()->randomElement(array_column(RolEnum::cases(), 'value')),
         ];
     }
 }

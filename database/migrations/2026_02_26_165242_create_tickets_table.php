@@ -17,11 +17,9 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->foreignId('agent_id')->nullable()->constrained('users')->onDelete('set null');
             $table->string('title');
-            $table->string('priority');
-            $table->string('status')->default(Status::OPEN->value);
+            $table->string('priority')->index();
+            $table->string('status')->default(Status::OPEN->value)->index();
             $table->timestamp('last_reply_at')->nullable();
-            $table->index('user_id');
-            $table->index('agent_id');
             $table->timestamps();
         });
     }

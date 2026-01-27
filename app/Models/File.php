@@ -11,11 +11,11 @@ class File extends Model
     /** @use HasFactory<\Database\Factories\FileFactory> */
     use HasFactory;
     protected $fillable = [
-        'model_id',
-        'model_type',
+        'fileable_id',
+        'fileable_type',
         'file_path'
     ];
-    public function fileables(): MorphTo
+    public function fileable(): MorphTo
     {
         return $this->morphTo();
     }
