@@ -20,7 +20,7 @@ pest()->extend(Tests\TestCase::class)
         $this->seed(RolSeeder::class);
         $this->seed(LabelSeeder::class);
     })
-    ->in('Feature');
+    ->in('Feature','Unit');
 
 /*
 |--------------------------------------------------------------------------

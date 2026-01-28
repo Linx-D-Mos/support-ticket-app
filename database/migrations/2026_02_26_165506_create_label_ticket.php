@@ -15,8 +15,6 @@ return new class extends Migration
             $table->id();
             $table->foreignId('label_id')->constrained('labels')->onDelete('cascade');
             $table->foreignId('ticket_id')->constrained('tickets')->onDelete('cascade');
-            $table->index('label_id');
-            $table->index('ticket_id');
             $table->timestamps();
         });
     }

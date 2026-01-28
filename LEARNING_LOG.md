@@ -399,3 +399,84 @@ Aprendí a no pelear contra `Queue::fake()` cuando algo no funciona como espero.
 ### 5. 🛡️ Seguridad en Controladores
 - **Middleware:** Usar `auth:sanctum` para proteger endpoints.
 - **User Injection:** Nunca confiar en el `user_id` que viene del request. Siempre inyectarlo desde el token autenticado: `$request->user()->id`.
+
+[28-01-2026] - Seguridad, Automatización y Arquitectura Asíncrona (SLA)
+1. 🛡️ Seguridad y Autorización (Policies)
+Aprendí a blindar la aplicación usando Policies en lugar de llenar los controladores de if/else.
+
+Concepto: Una Policy encapsula la lógica de autorización de un Modelo específico.
+
+Implementación:
+
+Uso de authorize('view', $ticket) en el controlador.
+
+Lógica de Negocio: Un Agente puede ver tickets "Abiertos" aunque no sean suyos, pero un Cliente solo ve los propios.
+
+Gotcha (Error Común): Comparación estricta de Enums.
+
+Error: Comparar $ticket->status (Casteado a Enum Object) === 'open' (String).
+
+Solución: Comparar Enum con Enum (Status::OPEN) o acceder al valor (->value).
+
+Testing: Uso de actingAs($user) y assertForbidden() (403) para verificar brechas de seguridad.
+
+2. 🤖 Comandos de Consola y Rendimiento
+Creación del comando tickets:check-sla para detectar tickets urgentes olvidados.
+
+Manejo de Memoria: Aprendí a usar ->cursor() en lugar de ->get().
+
+get(): Carga 50,000 registros en RAM (riesgo de crash).
+
+cursor(): Usa un generador de PHP para traerlos uno a uno (memoria plana).
+
+Time Travel Testing:
+
+En lugar de esperar 2 horas reales, usamos $this->travelTo(now()->subHours(3)) en los tests para simular el paso del tiempo instantáneamente.
+
+3. 📡 Arquitectura Orientada a Eventos (Event-Driven)
+Implementación del flujo completo de escalación de tickets. Entendí la responsabilidad única de cada pieza:
+
+Command (Sensor): Detecta la condición (Query a BD) y dispara la alarma (Event::dispatch). NO envía correos.
+
+Event (Mensajero): DTO tonto que solo transporta el objeto $ticket.
+
+Listener (Obrero): Escucha el evento y ejecuta la tarea pesada (Enviar Email). Implementa ShouldQueue para no bloquear el sistema.
+
+Mail (Formato): Define el contenido visual.
+
+4. 🧪 Estrategias de Testing Avanzado
+Aprendí a no mezclar niveles de testing.
+
+Feature Test (Comando):
+
+Probamos que el comando dispare el evento: Event::assertDispatched.
+
+Usamos un Closure para asegurar que el evento lleva el Ticket ID correcto.
+
+Unit Test (Listener):
+
+Probamos el Listener de forma aislada sin disparar el evento globalmente.
+
+Instanciamos manualmente: $listener->handle($event).
+
+Mocking de Mail: Mail::assertSent verificando que el correo lleva el ticket adjunto.
+
+5. 🐛 Debugging de Mailables
+Error Crítico: Undefined property $ticket.
+
+Causa: El constructor del Mailable estaba vacío. Aunque le pasábamos datos, no los guardaba.
+
+Solución: Definir la propiedad como pública en el constructor (public Ticket $ticket). Esto permite que la vista (Blade) y los Tests accedan a los datos del ticket.
+[28-01-2026] - Finalización de Colas y Reto de Arquitectura
+1. ⚙️ El Worker (Obrero) de Laravel
+Aprendí por las malas que un Job encolado (ShouldQueue) no se ejecuta solo.
+
+En Local: Se requiere ejecutar sail artisan queue:work para procesar los jobs pendientes.
+
+El Flujo: El código PHP termina rápido enviando el trabajo a la BD (tabla jobs), y el worker lo recoge en segundo plano.
+
+2. 📧 Mailables y Datos Públicos
+Los Mailables actúan como "sobres". Si el constructor no asigna los datos a propiedades public, la vista y los tests no pueden acceder a ellos.
+
+3. 🛡️ Prevención de Solapamiento (Overlapping)
+withoutOverlapping(): Vital para comandos programados (Cron). Crea un archivo "candado" (mutex) que impide que una segunda instancia del comando arranque si la primera no ha terminado (evita duplicidad de correos y colapso de RAM).

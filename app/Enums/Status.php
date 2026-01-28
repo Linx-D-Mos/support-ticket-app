@@ -8,5 +8,6 @@ enum Status : string
     case INPROGRESS = 'in progress';
     case PENDING = 'pending';
     case RESOLVED = 'resolved';
+    case ELEVATED = 'elevated';
     case CLOSED = 'closed';
 }

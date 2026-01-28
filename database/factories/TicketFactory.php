@@ -28,8 +28,8 @@ class TicketFactory extends Factory
             'user_id' => User::factory()->create(['rol_id' => $customer]),
             'agent_id' => null,
             'title' => fake()->word(),
-            'priority' => Priority::LOW->value,
-            'status' => Status::OPEN->value,
+            'priority' => Priority::LOW,
+            'status' => Status::OPEN,
             'last_reply_at' => null,
         ];
     }
