@@ -22,7 +22,6 @@ class StoreAnswerRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'user_id' => 'required|exists:users,id',
             'body' => 'required|string',
             'files' => 'nullable|array',
             'files.*' => 'mimes:png,jpeg,jpg,pdf,docx,xlsx|max:10240',

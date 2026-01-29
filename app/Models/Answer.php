@@ -17,6 +17,11 @@ class Answer extends Model
         'body',
         'type',
     ];
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
     public function ticket(): BelongsTo
     {
         return $this->belongsTo(Ticket::class);
