@@ -5,6 +5,7 @@ namespace App\Services;
 use App\DTOs\CreateTicketDTO;
 use App\Enums\Status;
 use App\Events\TicketCreated;
+use App\Models\Label;
 use App\Models\Ticket;
 use Exception;
 use Illuminate\Support\Facades\DB;
@@ -21,17 +22,18 @@ class CreateTicketService
                     'priority' => $data->priority,
                     'status' => Status::OPEN,
                 ]);
-                
+
                 if ($data->files) {
                     foreach ($data->files as $file) {
                         $path = $file->store('tickets/attachments', 'public');
                         $ticket->files()->create(['file_path' => $path]);
                     }
                 }
-                if($data->labels){
-                    $ticket->labels()->attach($data->labels);
+                if ($data->labels) {
+                    $labelIds = Label::where('name', $data->labels)->pluck('id');
+                    $ticket->labels()->attach($labelIds);
                 }
-                
+
                 return $ticket;
             }
         );
@@ -39,6 +41,6 @@ class CreateTicketService
             throw new Exception('klk');
         }
         TicketCreated::dispatch($ticket);
-        return $ticket;
+        return $ticket->load('labels','files');
     }
 }

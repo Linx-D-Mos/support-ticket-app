@@ -2,12 +2,9 @@
 
 namespace App\Http\Requests;
 
-use App\Enums\Priority;
-use App\Enums\Type;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rules\Enum;
 
-class StoreTicketRequest extends FormRequest
+class addAgentTicketRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,12 +22,7 @@ class StoreTicketRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => 'required|string',
-            'priority' => ['required', new Enum(Priority::class)],
-            'labels' => 'required|array',
-            'labels.*' => [new Enum(Type::class), 'exists:labels,name'],
-            'files' => 'nullable|array',
-            'files.*' => 'mimes:png,jpeg,jpg,pdf,docx,xlsx|max:10240',
+            'agent_id' => ['required', 'exists:users,id']
         ];
     }
 }

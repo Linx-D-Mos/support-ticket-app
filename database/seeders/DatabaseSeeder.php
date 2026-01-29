@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Label;
+use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -19,6 +20,9 @@ class DatabaseSeeder extends Seeder
 
         $this->call(RolSeeder::class);
         $this->call(LabelSeeder::class);
+        User::factory(1)->admin()->create();
+        User::factory(3)->agent()->create();
+        User::factory(6)->customer()->create();
         // $customerRolId = Rol::where('name', RolEnum::CUSTOMER->value)->firstOrFail()->id;
         // $agentRolId = Rol::where('name', RolEnum::AGENT->value)->firstOrFail()->id;
         // $customer = User::factory()->create([

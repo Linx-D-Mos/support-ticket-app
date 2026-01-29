@@ -480,3 +480,118 @@ Los Mailables actúan como "sobres". Si el constructor no asigna los datos a pro
 
 3. 🛡️ Prevención de Solapamiento (Overlapping)
 withoutOverlapping(): Vital para comandos programados (Cron). Crea un archivo "candado" (mutex) que impide que una segunda instancia del comando arranque si la primera no ha terminado (evita duplicidad de correos y colapso de RAM).
+📅 [29-01-2026] - Módulo de Respuestas, Optimización y Debugging Avanzado
+1. 🏗️ Implementación de Respuestas (Answers)
+Implementé el flujo completo para que Agentes y Clientes puedan interactuar en un ticket.
+
+Arquitectura: Controller → Request (Validación) → DTO (Transporte estricto) → Service (Lógica DB + Transacción) → Event → Listener/Mail.
+
+Relación: Actualización automática de last_reply_at en el ticket padre al crear una respuesta.
+
+2. 🐛 Debugging: Errores Críticos y Soluciones
+Hoy me enfrenté a una serie de errores en cadena que reforzaron mi atención al detalle:
+
+Error 404 (Routing): Mi test fallaba porque definí la ruta en singular (answer) pero el test llamaba al plural (answers).
+
+Lección: Estandarizar rutas API siempre en plural.
+
+Error 500 (Sintaxis PHP): Array callback must have exactly two elements.
+
+Causa: Intenté acceder a un array validado usando paréntesis $data('key') como si fuera función.
+
+Solución: Usar corchetes $data['key'].
+
+TypeError (DTOs): Intenté pasar un objeto User completo a una propiedad del DTO definida como int.
+
+Lección: Los DTOs obligan a ser estricto con los tipos de datos.
+
+Policy Authorization (La "Trampa"):
+
+Problema: $this->authorize('create', $ticket) invocaba a TicketPolicy, permitiendo acceso incorrecto.
+
+Solución: Para verificar permisos de creación de un modelo hijo (Answer) basado en un padre (Ticket), debo pasar un array: $this->authorize('create', [Answer::class, $ticket]). Esto fuerza a Laravel a usar AnswerPolicy.
+
+Tip: optimize:clear fue necesario para limpiar la caché de policies.
+
+3. 🚀 Optimización de Rendimiento (Batch Processing)
+Refactoricé la lógica de asignación de etiquetas (Labels) en CreateTicketService.
+
+El Problema (N+1): Un bucle foreach que hacía un SELECT y un INSERT por cada etiqueta. (10 etiquetas = 20 queries).
+
+La Solución Senior:
+
+whereIn('name', $nombres)->pluck('id'): Una sola consulta para obtener todos los IDs.
+
+$ticket->labels()->attach($ids): Una sola consulta para insertar todas las relaciones.
+
+Resultado: Reducción drástica de queries a la base de datos (O(1) constante).
+
+🗺️ HOJA DE RUTA: Finalización del Proyecto (Helpdesk)
+📌 Módulo A: Ciclo de Vida y Visualización (PRIORIDAD ALTA)
+Tarea A1: Hilo de Conversación Completo (Thread View)
+Descripción: El endpoint GET /tickets/{id} debe devolver toda la historia.
+
+Criterios de Aceptación (AC):
+
+La respuesta JSON debe incluir una llave thread o answers.
+
+Debe incluir al Usuario que respondió (nombre, rol) y los Archivos adjuntos de cada respuesta.
+
+El orden debe ser cronológico (Lo más viejo arriba).
+
+Uso estricto de Eager Loading (with()) para evitar consultas N+1.
+
+Los created_at deben ser legibles (o timestamps estándar).
+
+Tarea A2: Flujo de Estados (RPC Endpoints)
+Descripción: Acciones explícitas para cambiar el estado del ticket.
+
+Endpoints:
+
+POST /tickets/{ticket}/resolve (Agentes).
+
+POST /tickets/{ticket}/close (Dueño/Admin).
+
+Criterios de Aceptación:
+
+Validar con Policies que un Cliente no pueda resolver (solo cerrar).
+
+Validar que no se pueda re-abrir un ticket cerrado (opcional, o definir regla).
+
+Registrar la fecha de resolución (resolved_at).
+
+📌 Módulo B: Buscador Avanzado (Scopes)
+Descripción: Permitir filtrar la lista de tickets.
+
+Criterios de Aceptación:
+
+Implementar scopeStatus, scopePriority y scopeSearch en el Modelo.
+
+El buscador debe ser insensible a mayúsculas (ILIKE en Postgres).
+
+URL soportada: ?status=open&search=impresora.
+
+📌 Módulo C: Métricas (Dashboard)
+Descripción: Endpoint para ver la salud del sistema.
+
+Criterios de Aceptación:
+
+Uso de agregaciones SQL (count, group by). Prohibido procesar arrays en PHP.
+
+JSON de respuesta: { total_open: X, by_priority: { high: Y, low: Z } }.
+
+📌 Módulo D: Audit Logs (Plus Profesional)
+Descripción: Historial de cambios invisible al usuario común pero visible al admin.
+
+Criterios de Aceptación:
+
+Tabla polimórfica o dedicada activities.
+
+Registrar cambios de estado y prioridad automáticamente (Observers o Events).
+
+👨‍💻 Siguiente Paso Inmediato:
+Comenzar con Tarea A1: Hilo de Conversación.
+
+Acción: Modificar TicketController@show y TicketResource.
+
+Reto: Investigar Eager Loading anidado (answers.user).

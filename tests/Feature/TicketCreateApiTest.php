@@ -5,14 +5,13 @@ use App\Enums\RolEnum;
 use App\Models\Label;
 use App\Models\Rol;
 use App\Models\User;
-use Database\Seeders\RolSeeder;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
-use Tests\TestCase;
 
 
 
-test('can create an ticket', function () {
+
+test('can create a ticket', function () {
     Storage::fake('public');
 
     $pdf = UploadedFile::fake()->create('guide.pdf', 5000);

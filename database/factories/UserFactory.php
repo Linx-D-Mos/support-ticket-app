@@ -44,4 +44,22 @@ class UserFactory extends Factory
             'email_verified_at' => null,
         ]);
     }
+    public function customer(): static
+    {
+        return $this->state(fn(array $attributes)=>[
+            'rol_id' => Rol::where('name', RolEnum::CUSTOMER->value)->value('id'),
+        ]);
+    }
+    public function agent(): static
+    {
+        return $this->state(fn(array $attributes)=>[
+            'rol_id' => Rol::where('name', RolEnum::AGENT->value)->value('id'),
+        ]);
+    }
+    public function admin(): static
+    {
+        return $this->state(fn(array $attributes)=>[
+            'rol_id' => Rol::where('name', RolEnum::ADMIN->value)->value('id'),
+        ]);
+    }
 }

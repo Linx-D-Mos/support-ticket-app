@@ -3,12 +3,17 @@
 namespace App\Http\Controllers;
 
 use App\DTOs\CreateTicketDTO;
+use App\Enums\RolEnum;
+use App\Http\Requests\addAgentTicketRequest;
 use App\Http\Requests\StoreTicketRequest;
 use App\Http\Requests\UpdateTicketRequest;
 use App\Http\Resources\TicketResource;
 use App\Models\Ticket;
+use App\Models\User;
+use App\Services\AddAgentService;
 use App\Services\CreateTicketService;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class TicketController extends Controller
@@ -39,8 +44,9 @@ class TicketController extends Controller
         $this->authorize('view', $ticket);
         return (new TicketResource($ticket));
     }
-    public function update(UpdateTicketRequest $request, Ticket $ticket){
-        $this->authorize('update',$ticket);
+    public function update(UpdateTicketRequest $request, Ticket $ticket)
+    {
+        $this->authorize('update', $ticket);
         $validated = $request->validated();
         $ticket->update($validated);
         return (new TicketResource($ticket));
@@ -54,5 +60,14 @@ class TicketController extends Controller
         $ticket->delete();
 
         return response()->noContent();
+    }
+    public function addAgent(Ticket $ticket, addAgentTicketRequest $request, AddAgentService $service)
+    {
+        $validated = $request->validated();
+        $ticket = $service->addAgent($ticket, $validated['agent_id']);
+        return (new TicketResource($ticket))
+            ->additional(['message' => 'Agente añadido con exito'])
+            ->response()
+            ->setStatusCode(Response::HTTP_OK);
     }
 }
