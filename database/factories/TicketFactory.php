@@ -10,6 +10,7 @@ use App\Models\Rol;
 use App\Models\Ticket;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Symfony\Component\Translation\StaticMessage;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Ticket>
@@ -49,6 +50,12 @@ class TicketFactory extends Factory
         return $this->state(fn(array $attribute) => [
             'agent_id' => $agent->id,
             'status' => Status::INPROGRESS,
+        ]);
+    }
+    public function createdBy(User $customer): static 
+    {
+        return $this->state(fn(array $attribute) => [
+            'user_id' => $customer->id,
         ]);
     }
     public function urgent(): static

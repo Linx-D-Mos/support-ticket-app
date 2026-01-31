@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\DTOs\CreateTicketDTO;
-use App\Enums\RolEnum;
+use App\DTOs\UpdateTicketDTO;
 use App\Enums\Status;
 use App\Http\Requests\addAgentTicketRequest;
 use App\Http\Requests\StoreTicketRequest;
@@ -13,6 +13,7 @@ use App\Http\Resources\TicketThreadResource;
 use App\Models\Ticket;
 use App\Services\AddAgentService;
 use App\Services\CreateTicketService;
+use App\Services\UpdateTicketService;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -262,22 +263,28 @@ class TicketController extends Controller
      *   }
      * }
      */
-    public function update(UpdateTicketRequest $request, Ticket $ticket)
+    public function update(UpdateTicketRequest $request, Ticket $ticket,UpdateTicketService $service)
     {
         $this->authorize('update', $ticket);
         $validated = $request->validated();
-        $ticket->update($validated);
-        $ticket->load('files', 'labels', 'user', 'agent');
-        return (new TicketResource($ticket));
+        $dto = new UpdateTicketDTO(
+            ticket_id: $ticket->id,
+            user_id: $request->user()->id,
+            title: $validated['title'] ?? $ticket->title,
+            priority: $validated['priority'] ?? $ticket->priority->value,
+            labels: $validated['labels'] ?? null,
+        );
+        $ticket = $service->updateTicket($dto);
+        return (new TicketResource($ticket))
+        ->additional(['message' => 'Ticket actualizado con exito'])
+        ->response()
+        ->setStatusCode(Response::HTTP_OK);
     }
 
 
     public function destroy(Ticket $ticket)
     {
         $this->authorize('delete', $ticket);
-        $ticket->files()->delete();
-        $ticket->labels()->detach();
-        $ticket->answers()->delete();
         $ticket->delete();
 
         return response()->noContent();

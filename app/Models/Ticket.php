@@ -10,11 +10,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Ticket extends Model
 {
     /** @use HasFactory<\Database\Factories\TicketFactory> */
-    use HasFactory;
+    use HasFactory, SoftDeletes;
     protected $fillable = [
         'user_id',
         'agent_id',

@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use App\Enums\Priority;
 use App\Enums\Status;
+use App\Enums\Type;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rules\Enum;
 
@@ -25,9 +26,10 @@ class UpdateTicketRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'status' => [new Enum(Status::class)],
             'title' => 'string',
             'priority' => [new Enum(Priority::class)],
+            'labels' => 'array',
+            'labels.*' => [new Enum(Type::class)],
         ];
     }
 }

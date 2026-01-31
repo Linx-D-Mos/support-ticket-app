@@ -22,6 +22,7 @@ return new class extends Migration
             $table->timestamp('last_reply_at')->nullable();
             $table->timestamp('resolve_at')->nullable();
             $table->timestamp('close_at')->nullable();
+            $table->softDeletes();
             $table->timestamps();
         });
     }
