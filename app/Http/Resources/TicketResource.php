@@ -29,6 +29,9 @@ class TicketResource extends JsonResource
                 'id' => $this->agent->id,
                 'name' => $this->agent->name,
             ] : null,
+            'last_reply_at' => $this->last_reply_at,
+            'resolve_at' => $this->resolve_at,
+            'close_at' => $this->close_at,
             'files' => FileResource::collection($this->whenLoaded('files')),
             'labels' => LabelsResource::collection($this->whenLoaded('labels')),
         ];

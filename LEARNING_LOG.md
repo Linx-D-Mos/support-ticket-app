@@ -595,3 +595,23 @@ Comenzar con Tarea A1: Hilo de Conversación.
 Acción: Modificar TicketController@show y TicketResource.
 
 Reto: Investigar Eager Loading anidado (answers.user).
+## 📅 [30-01-2026] - Optimización, Scopes y Dashboard
+
+### 1. 🚀 Rendimiento en API Resources (Fix N+1)
+Aprendí a no desperdiciar la memoria cargada por Eager Loading.
+- **Error:** Usar `User::find($id)` dentro de un Resource (`toArray`), lo que causaba consultas repetitivas a la BD aunque ya hubiera usado `with()` en el controlador.
+- **Solución:** Acceder directamente a las relaciones cargadas (`$this->user->name`). Laravel "incrusta" los objetos, evitando viajes extra a la base de datos.
+
+### 2. 🔍 Buscador y Filtros Avanzados (Local Scopes)
+Implementé un sistema de filtrado limpio encapsulando la lógica SQL en el Modelo `Ticket`.
+- **Scopes:** `scopeStatus`, `scopePriority` y `scopeSearch`.
+- **Postgres Tip:** Aprendí a usar `ILIKE` (`$q->where('title', 'ilike', "%{$term}%")`) para hacer búsquedas insensibles a mayúsculas/minúsculas, mejorando la UX.
+- **URL Parameters:** Manejo de espacios en la URL (Enums como `in progress` viajan como `in%20progress` o deben mapearse a snake_case).
+
+### 3. 📊 Dashboard de Métricas
+Creé un endpoint de estadísticas sin cargar modelos en memoria PHP.
+- **Estrategia:** Delegar los cálculos a la base de datos.
+- **Técnica:** Uso de `Ticket::count()` y `groupBy` con `selectRaw` para obtener la distribución de tickets por prioridad en una sola consulta eficiente.
+- **Naming:** Corregí la semántica de `average_priority` a `tickets_by_priority` (o distribución), ya que es un conteo, no un promedio matemático.
+
+---

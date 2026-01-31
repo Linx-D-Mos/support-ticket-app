@@ -26,10 +26,8 @@ class TicketPolicy
      */
     public function view(User $user, ticket $ticket): bool
     {
-        $adminRoleId = Rol::where('name', RolEnum::ADMIN->value)->value('id');
-        $agentRoleId = Rol::where('name', RolEnum::AGENT->value)->value('id');
-        return ($user->rol_id === $adminRoleId)
-            || ($user->rol_id === $agentRoleId && ($ticket->status === Status::OPEN || $ticket->agent_id === $user->id))
+        return ($user->hasRole(RolEnum::ADMIN))
+            || ($user->hasRole(RolEnum::AGENT) && ($ticket->status === Status::OPEN || $ticket->agent_id === $user->id))
             || ($ticket->user_id === $user->id);
     }
 
@@ -46,12 +44,10 @@ class TicketPolicy
      */
     public function update(User $user, ticket $ticket): bool
     {
-        $adminRoleId = Rol::where('name', RolEnum::ADMIN->value)->value('id');
-        $agentRoleId = Rol::where('name', RolEnum::AGENT->value)->value('id');
 
         return ($ticket->user_id === $user->id)
-            || ($user->rol_id === $adminRoleId)
-            || ($user->rol_id === $agentRoleId && ($ticket->status === Status::OPEN || $ticket->agent_id === $user->id));
+            || ($user->hasRole(RolEnum::ADMIN))
+            || ($user->hasRole(RolEnum::AGENT) && ($ticket->hasStatus(Status::OPEN) || $ticket->agent_id === $user->id));
     }
 
     /**
@@ -59,8 +55,7 @@ class TicketPolicy
      */
     public function delete(User $user, ticket $ticket): bool
     {
-        $adminRoleId = Rol::where('name', RolEnum::ADMIN->value)->value('id');
-        return $user->rol_id === $adminRoleId;
+        return $user->hasRole(RolEnum::ADMIN);
     }
 
     /**
@@ -68,8 +63,7 @@ class TicketPolicy
      */
     public function restore(User $user, ticket $ticket): bool
     {
-        $adminRoleId = Rol::where('name', RolEnum::ADMIN->value)->value('id');
-        return $user->rol_id === $adminRoleId;
+        return $user->hasRole(RolEnum::ADMIN);
     }
 
     /**
@@ -77,14 +71,21 @@ class TicketPolicy
      */
     public function forceDelete(User $user, ticket $ticket): bool
     {
-        $adminRoleId = Rol::where('name', RolEnum::ADMIN->value)->value('id');
-        return $user->rol_id === $adminRoleId;
+        return $user->hasRole(RolEnum::ADMIN);
     }
     public function addAgent(User $user, ticket $ticket): bool
     {
-        $adminRoleId = Rol::where('name', RolEnum::ADMIN->value)->value('id');
-        $agentRoleId = Rol::where('name', RolEnum::AGENT->value)->value('id');
-        return ($user->rol_id === $adminRoleId ) 
-        || ($user->rol_id === $agentRoleId);
+        return ($user->hasRole(RolEnum::ADMIN))
+            || ($ticket->agent_id === null && $user->hasRole(RolEnum::AGENT));
+    }
+    public function resolve(User $user, ticket $ticket): bool
+    {
+        return (!$ticket->hasStatus(Status::RESOLVED) && !$ticket->hasStatus(Status::CLOSED))
+            && (($user->hasRole(RolEnum::AGENT)  && ($ticket->agent_id === $user->id)) || $user->hasRole(RolEnum::ADMIN));
+    }
+    public function close(User $user, ticket $ticket): bool
+    {
+        return (!$ticket->hasStatus(Status::CLOSED) && ($ticket->hasStatus(Status::OPEN)  || $ticket->hasStatus(Status::RESOLVED)))
+            && (($user->hasRole(RolEnum::CUSTOMER) && ($ticket->user_id === $user->id)) || $user->hasRole(RolEnum::ADMIN));
     }
 }

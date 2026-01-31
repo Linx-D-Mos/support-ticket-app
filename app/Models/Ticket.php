@@ -22,6 +22,8 @@ class Ticket extends Model
         'status',
         'priority',
         'last_reply_at',
+        'resolve_at',
+        'close_at',
     ];
     protected $casts = [
         'status' => Status::class,
@@ -46,5 +48,34 @@ class Ticket extends Model
     public function files(): MorphMany
     {
         return $this->morphMany(File::class, 'fileable');
+    }
+    public function hasStatus(Status $status): bool
+    {
+        return $this->status === $status;
+    }
+    public function hasPriority(Priority $priority): bool
+    {
+        return $this->priority === $priority;
+    }
+
+        public function scopeStatus($query, ?string $status)
+    {
+        if ($status) {
+            $query->where('status', $status);
+        }
+    }
+    public function scopePriority($query, ?string $priority)
+    {
+        if ($priority) {
+            $query->where('priority', $priority);
+        }
+    }
+    public function scopeSearch($query, ?string $term)
+    {
+        if ($term) {
+            $query->where(function ($q) use ($term) {
+                $q->where('title', 'ILIKE', "%{$term}%");
+            });
+        }
     }
 }

@@ -3,6 +3,11 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+
+use App\Enums\Priority;
+use App\Enums\RolEnum;
+use App\Enums\Status;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -56,5 +61,9 @@ class User extends Authenticatable
     public function answers(): HasMany
     {
         return $this->hasMany(Answer::class);
-    } 
+    }
+    public function hasRole(RolEnum $role): bool
+    {
+        return $this->rol()->where('name', $role)->exists();
+    }
 }

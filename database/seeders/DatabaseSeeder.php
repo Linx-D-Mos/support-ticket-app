@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Label;
+use App\Models\Ticket;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -23,6 +24,10 @@ class DatabaseSeeder extends Seeder
         User::factory(1)->admin()->create();
         User::factory(3)->agent()->create();
         User::factory(6)->customer()->create();
+        Ticket::factory(rand(3,8))->urgent()->create();
+        Ticket::factory(rand(3,8))->high()->create();
+        Ticket::factory(rand(3,8))->medium()->create();
+        Ticket::factory(rand(3,8))->low()->create();
         // $customerRolId = Rol::where('name', RolEnum::CUSTOMER->value)->firstOrFail()->id;
         // $agentRolId = Rol::where('name', RolEnum::AGENT->value)->firstOrFail()->id;
         // $customer = User::factory()->create([

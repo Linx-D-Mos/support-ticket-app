@@ -32,13 +32,9 @@ class AnswerPolicy
      */
     public function create(User $user, Ticket $ticket): bool
     {
-        
-        $adminRoleId = Rol::where('name', RolEnum::ADMIN->value)->value('id');
-        $agentRoleId = Rol::where('name', RolEnum::AGENT->value)->value('id');
-        
         return ($user->id === $ticket->user_id)
-        || ($user->rol_id === $agentRoleId && ($ticket->agent_id === $user->id))
-        || ($user->rol_id === $adminRoleId);
+        || ($user->hasRole(RolEnum::AGENT) && ($user->id === $ticket->agent_id))
+        || ($user->hasRole(RolEnum::ADMIN));
     }
 
     /**

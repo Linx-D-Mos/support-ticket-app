@@ -31,6 +31,8 @@ class TicketFactory extends Factory
             'priority' => Priority::LOW,
             'status' => Status::OPEN,
             'last_reply_at' => null,
+            'resolve_at' => null,
+            'close_at' => null,
         ];
     }
     public function withTickets(): static

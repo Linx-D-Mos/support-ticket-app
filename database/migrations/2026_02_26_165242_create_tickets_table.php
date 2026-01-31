@@ -20,6 +20,8 @@ return new class extends Migration
             $table->string('priority')->index();
             $table->string('status')->default(Status::OPEN->value)->index();
             $table->timestamp('last_reply_at')->nullable();
+            $table->timestamp('resolve_at')->nullable();
+            $table->timestamp('close_at')->nullable();
             $table->timestamps();
         });
     }

@@ -16,17 +16,14 @@ class AnswerResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        $user = User::find($this->user_id);
-        $rol = $user->rol()->where('id', $user->rol_id)->value('name');
-        $name = $user->name;
         return [
             'id' => $this->id,
             'body' => $this->body,
             'created_at' => $this->created_at,
             'user' => [
                 'id' => $this->user_id,
-                'name' => $name,
-                'user rol' => $rol,
+                'name' => $this->user->name,
+                'user rol' => $this->user->rol->name,
             ],
             'files' => FileResource::collection($this->files),
         ];

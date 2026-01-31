@@ -2,6 +2,9 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\RolEnum;
+use App\Enums\Status;
+use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
 
 class addAgentTicketRequest extends FormRequest
@@ -19,10 +22,13 @@ class addAgentTicketRequest extends FormRequest
      *
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
-    public function rules(): array
+    public function passedValidation()
     {
-        return [
-            'agent_id' => ['required', 'exists:users,id']
-        ];
+        $user = $this->user();
+        if($user->rol()->where('name', RolEnum::AGENT)->exists()){
+            $this->merge(
+                ['agent_id' => $user->id]
+            );
+        }
     }
 }
