@@ -11,11 +11,13 @@ Route::get('/user', function (Request $request) {
 })->middleware('auth:sanctum');
 
 Route::middleware(['auth:sanctum'])->group(function () {
-    
+
+    Route::put('tickets/{ticket}/assign', [TicketController::class,'assign']);
     Route::patch('tickets/{ticket}/resolve', [TicketController::class, 'resolve']);
     Route::patch('tickets/{ticket}/close', [TicketController::class, 'close']);
     Route::post('/tickets/{ticket}/addAgent', [TicketController::class, 'addAgent']);
     Route::apiResource('tickets', TicketController::class);
-    Route::post('/tickets/{ticket}/answers', [AnswerController::class, 'store']);
+
+    Route::apiResource('tickets.answers', AnswerController::class)->only(['store', 'update','destroy']);
     Route::get('/dashboard/stats', [DashboardController::class, 'stats']);
 });

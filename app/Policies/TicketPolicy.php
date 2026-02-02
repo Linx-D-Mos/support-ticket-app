@@ -88,4 +88,8 @@ class TicketPolicy
         return (!$ticket->hasStatus(Status::CLOSED) && ($ticket->hasStatus(Status::OPEN)  || $ticket->hasStatus(Status::RESOLVED)))
             && (($user->hasRole(RolEnum::CUSTOMER) && ($ticket->user_id === $user->id)) || $user->hasRole(RolEnum::ADMIN));
     }
+    public function assign(User $user, ticket $ticket): bool
+    {
+        return ($ticket->agent_id === $user->id) || ($user->hasRole(RolEnum::ADMIN));
+    }
 }

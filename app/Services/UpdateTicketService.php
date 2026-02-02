@@ -8,7 +8,7 @@ use App\Enums\Status;
 use App\Models\Label;
 use App\Models\Ticket;
 use App\Models\User;
-
+use Exception;
 
 class UpdateTicketService 
 {
@@ -17,7 +17,7 @@ class UpdateTicketService
         $user = $dto->user_id instanceof User ? $dto->user_id : User::find($dto->user_id);
 
         if(! $this->validateTicket($ticket, $user)){
-            abort(403, 'No puedes editar este ticket, solo está permitido hasta 10 min después de crearlo');
+            throw new Exception('No puedes editar este ticket, solo está permitido hasta 10 min después de crearlo');
         }
         if($user->hasRole(RolEnum::CUSTOMER)){
             $ticket->update([

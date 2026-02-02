@@ -7,6 +7,7 @@ namespace App\Models;
 use App\Enums\Priority;
 use App\Enums\RolEnum;
 use App\Enums\Status;
+use App\Traits\HasTimeWindow;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -18,7 +19,7 @@ use Laravel\Sanctum\HasApiTokens;
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable, HasApiTokens;
+    use HasFactory, Notifiable, HasApiTokens, HasTimeWindow;
 
     /**
      * The attributes that are mass assignable.

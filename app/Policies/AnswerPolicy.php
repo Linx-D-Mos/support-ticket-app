@@ -40,17 +40,35 @@ class AnswerPolicy
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, Answer $answer): bool
+    public function update(User $user, Answer $answer): Response
     {
-        return false;
+        // 1. Verificar si es dueño
+        if ($user->id !== $answer->user_id) {
+            return Response::deny('No eres el propietario de esta respuesta.');
+        }
+
+        // 2. Verificar tiempo (Usando nuestro Trait)
+        if (! $answer->isEditableInTimeWindow(10)) {
+            return Response::deny('El tiempo para editar ha expirado (máximo 10 minutos).');
+        }
+
+        return Response::allow();
     }
 
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, Answer $answer): bool
+    public function delete(User $user, Answer $answer): Response
     {
-        return false;
+        if ($user->id !== $answer->user_id) {
+            return Response::deny('No eres el propietario.');
+        }
+
+        if (! $answer->isEditableInTimeWindow(10)) {
+            return Response::deny('Ya no puedes eliminar esto, el tiempo ha expirado.');
+        }
+
+        return Response::allow();
     }
 
     /**

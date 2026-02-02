@@ -3,11 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\DTOs\CreateAnswerDTO;
+use App\DTOs\UpdateAnswerDTO;
 use App\Http\Requests\StoreAnswerRequest;
+use App\Http\Requests\UpdateAnswerRequest;
 use App\Http\Resources\AnswerResource;
 use App\Models\Answer;
 use App\Models\Ticket;
 use App\Services\CreateAnswerService;
+use App\Services\UpdateAnswerService;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -59,16 +62,28 @@ class AnswerController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(UpdateAnswerRequest $request, Ticket $ticket, Answer $answer, UpdateAnswerService $service)
     {
-        //
+        $this->authorize('update', $answer);
+        $dto = new UpdateAnswerDTO(
+            body: $request->validated()['body'],
+        );
+        $answer = $service->updateAnswer($answer, $dto);
+        return (new AnswerResource($answer->load('user', 'files')))
+            ->additional(['message' => '¡Answer editada con exito!'])
+            ->response()
+            ->setStatusCode(Response::HTTP_OK);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Ticket $ticket, Answer $answer)
     {
-        //
+        $this->authorize('delete', $answer);
+        $answer->delete();
+
+        return response()
+            ->noContent();
     }
 }

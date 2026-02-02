@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\HasTimeWindow;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
@@ -9,7 +10,7 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 class File extends Model
 {
     /** @use HasFactory<\Database\Factories\FileFactory> */
-    use HasFactory;
+    use HasFactory, HasTimeWindow;
     protected $fillable = [
         'fileable_id',
         'fileable_type',

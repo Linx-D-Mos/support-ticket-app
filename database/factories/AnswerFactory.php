@@ -24,4 +24,16 @@ class AnswerFactory extends Factory
             'body' => fake()->paragraph(),
         ];
     }
+    public function assignedTo(Ticket $ticket): static
+    {
+        return $this->state(fn(array $attribute) => [
+            'ticket_id' => $ticket->id,
+        ]);
+    }
+    public function createBy(User $user): static
+    {
+        return $this->state(fn(array $attribute) => [
+            'user_id' => $user->id,
+        ]);
+    }
 }

@@ -6,12 +6,15 @@ use App\DTOs\CreateTicketDTO;
 use App\DTOs\UpdateTicketDTO;
 use App\Enums\Status;
 use App\Http\Requests\addAgentTicketRequest;
+use App\Http\Requests\AssignaAgentRequest;
+use App\Http\Requests\AssignAgentRequest;
 use App\Http\Requests\StoreTicketRequest;
 use App\Http\Requests\UpdateTicketRequest;
 use App\Http\Resources\TicketResource;
 use App\Http\Resources\TicketThreadResource;
 use App\Models\Ticket;
 use App\Services\AddAgentService;
+use App\Services\AssignAgentService;
 use App\Services\CreateTicketService;
 use App\Services\UpdateTicketService;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
@@ -412,5 +415,13 @@ class TicketController extends Controller
             ->additional(['message' => '¡Ticket cerrado con exito!'])
             ->response()
             ->setStatusCode(Response::HTTP_OK);
+    }
+    public function assign(Ticket $ticket,AssignAgentRequest $request, AssignAgentService $service){
+        $this->authorize('assign', $ticket);
+        $ticket = $service->assignAgent($ticket, $request->validated(['agent_id']));
+        return (new TicketResource($ticket))
+        ->additional(['message' => '¡cambio de agent exitoso!'])
+        ->response()
+        ->setStatusCode(Response::HTTP_OK);
     }
 }

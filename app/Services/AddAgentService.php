@@ -34,7 +34,7 @@ class AddAgentService
     }
     public function userValidation(int $agent_id)
     {
-        return User::findOrFail($agent_id);
+        return User::find($agent_id);
     }
     public function rolValidation(User $agent)
     {
