@@ -30,11 +30,17 @@ class AnswerPolicy
     /**
      * Determine whether the user can create models.
      */
-    public function create(User $user, Ticket $ticket): bool
+    public function create(User $user, Ticket $ticket): Response
     {
-        return ($user->id === $ticket->user_id)
-        || ($user->hasRole(RolEnum::AGENT) && ($user->id === $ticket->agent_id))
-        || ($user->hasRole(RolEnum::ADMIN));
+
+        if (
+            !(($user->id === $ticket->user_id)
+                || ($user->hasRole(RolEnum::AGENT) && ($user->id === $ticket->agent_id))
+                || ($user->hasRole(RolEnum::ADMIN)))
+        ) {
+            return Response::deny('No tiene autorización para responder a este ticket');
+        }
+        return Response::allow();
     }
 
     /**

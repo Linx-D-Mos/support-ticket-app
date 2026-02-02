@@ -6,7 +6,6 @@ use App\DTOs\CreateTicketDTO;
 use App\DTOs\UpdateTicketDTO;
 use App\Enums\Status;
 use App\Http\Requests\addAgentTicketRequest;
-use App\Http\Requests\AssignaAgentRequest;
 use App\Http\Requests\AssignAgentRequest;
 use App\Http\Requests\StoreTicketRequest;
 use App\Http\Requests\UpdateTicketRequest;

@@ -615,3 +615,26 @@ Creé un endpoint de estadísticas sin cargar modelos en memoria PHP.
 - **Naming:** Corregí la semántica de `average_priority` a `tickets_by_priority` (o distribución), ya que es un conteo, no un promedio matemático.
 
 ---
+[02-02-2026] - Refinamiento del CRUD, Traits y Restricciones de Tiempo
+1. ⏳ Restricciones Temporales (Time-Based Logic)
+Implementé reglas de negocio para limitar la edición y eliminación de contenido, asegurando la integridad histórica del chat.
+
+Lógica: Los usuarios solo pueden editar o eliminar sus Tickets, Respuestas y Archivos dentro de un periodo de tiempo específico (ej. 10 minutos desde su creación).
+
+Abstracción con Traits: Creé un Trait reutilizable (ej. HasTimeLimit o similar) y lo apliqué a los modelos Ticket, Answer y File.
+
+Beneficio: Evito duplicar la lógica de created_at->diffInMinutes() > X en múltiples Policies o Controladores. Mantengo el código DRY (Don't Repeat Yourself).
+
+2. 🔄 Reasignación de Agentes
+Completé la funcionalidad para cambiar el agente responsable de un ticket.
+
+Flujo: Implementación del endpoint PUT para actualizar el agent_id.
+
+Validación: Aseguré que el nuevo usuario asignado tenga el rol de Agente antes de guardar los cambios.
+
+3. 🧹 Limpieza del CRUD (Update & Delete)
+Cerré los ciclos pendientes de gestión de contenido:
+
+Tickets & Answers: Implementación completa de update (solo campos permitidos) y delete (Soft Deletes donde aplica), respetando las nuevas restricciones de tiempo.
+
+Archivos: Capacidad de eliminar adjuntos específicos sin borrar todo el ticket, validando permisos de propiedad.

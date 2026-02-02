@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Enums\RolEnum;
 use App\Enums\Status;
+use App\Events\TicketAgentReassigned;
 use App\Models\Ticket;
 use App\Models\User;
 use Exception;
@@ -22,6 +23,7 @@ class AssignAgentService
         }
 
         $ticket->update(['agent_id' => $agent->id]);
+        TicketAgentReassigned::dispatch($ticket);
         return $ticket;
     }
     public function ticketValidation(Ticket $ticket)
