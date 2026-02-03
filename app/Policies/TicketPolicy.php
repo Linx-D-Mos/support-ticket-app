@@ -47,7 +47,7 @@ class TicketPolicy
             return Response::deny('No puedes modificar un ticket que ya está cerrado.');
         }
 
-        if ($user->id === $ticket->user_id && !$ticket->isEditableInTimeWindow(10)) {
+        if ($user->id === $ticket->user_id && !$ticket->isEditableInTimeWindow(15)) {
             return Response::deny('El tiempo para editar tu ticket ha expirado (máximo 10 minutos).');
         }
 
@@ -73,13 +73,15 @@ class TicketPolicy
 
         return Response::deny('No tienes permiso para eliminar este ticket o el tiempo límite ha expirado.');
     }
-
     /**
      * Determine whether the user can restore the model.
      */
-    public function restore(User $user, ticket $ticket): bool
+    public function restore(User $user): Response
     {
-        return $user->hasRole(RolEnum::ADMIN);
+        if(!($user->hasRole(RolEnum::ADMIN))){
+            return Response::deny('No tienes autorización para acceder a esta funcionalidad');
+        }
+        return Response::allow();
     }
 
     /**

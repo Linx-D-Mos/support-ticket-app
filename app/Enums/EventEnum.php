@@ -2,9 +2,10 @@
 
 namespace App\Enums;
 
-enum EventEnum : string
+enum EventEnum: string
 {
     case CREATED = 'created';
     case UPDATED = 'updated';
-    case DELETED = 'deleted'; 
+    case DELETED = 'deleted';
+    case RESTORED = 'restored';
 }

@@ -15,6 +15,7 @@ use App\Models\Ticket;
 use App\Services\AddAgentService;
 use App\Services\AssignAgentService;
 use App\Services\CreateTicketService;
+use App\Services\RestoreTicketService;
 use App\Services\UpdateTicketService;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
@@ -291,6 +292,18 @@ class TicketController extends Controller
 
         return response()->noContent();
     }
+
+    public function restore(Request $request, string $id, RestoreTicketService $service)
+    {
+
+        $this->authorize('restore', Ticket::class);
+        $ticket = $service->restoreTicket($id);
+        return (new TicketResource($ticket))
+        ->additional(['message' => 'Ticket recuperado con exito'])
+        ->response()
+        ->setStatusCode(Response::HTTP_OK);
+    }
+
     public function addAgent(Ticket $ticket, addAgentTicketRequest $request, AddAgentService $service)
     {
         $this->authorize('addAgent', $ticket);
@@ -358,7 +371,6 @@ class TicketController extends Controller
             ->setStatusCode(Response::HTTP_OK);
     }
 
-
     /**
      * Cerrar un ticket.
      *
@@ -415,6 +427,7 @@ class TicketController extends Controller
             ->response()
             ->setStatusCode(Response::HTTP_OK);
     }
+
     public function assign(Ticket $ticket,AssignAgentRequest $request, AssignAgentService $service){
         $this->authorize('assign', $ticket);
         $ticket = $service->assignAgent($ticket, $request->validated(['agent_id']));

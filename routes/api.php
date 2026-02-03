@@ -13,6 +13,7 @@ Route::get('/user', function (Request $request) {
 
 Route::middleware(['auth:sanctum'])->group(function () {
 
+    Route::patch('tickets/{id}/restore', [TicketController::class,'restore']);
     Route::put('tickets/{ticket}/assign', [TicketController::class,'assign']);
     Route::patch('tickets/{ticket}/resolve', [TicketController::class, 'resolve']);
     Route::patch('tickets/{ticket}/close', [TicketController::class, 'close']);

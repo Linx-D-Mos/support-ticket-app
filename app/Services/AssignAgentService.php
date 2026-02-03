@@ -29,7 +29,7 @@ class AssignAgentService
             }
 
             $ticket->update(['agent_id' => $agent->id]);
-            TicketAgentReassigned::dispatchAfterResponse($ticket);
+            TicketAgentReassigned::dispatch($ticket);
             return $ticket;
         });
     }

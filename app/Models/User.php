@@ -77,7 +77,7 @@ class User extends Authenticatable
     //Helper Method
     public function hasRole(RolEnum $role): bool
     {
-        //return $this->rol()->where('name', $role)->exists();
-        return $this->rol?->name === $role;
+        return $this->rol()->where('name', $role)->exists();
+        // return $this->rol?->name === $role;
     }
 }
