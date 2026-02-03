@@ -7,26 +7,34 @@ use App\Enums\Status;
 use App\Models\Ticket;
 use App\Models\User;
 use Exception;
+use Illuminate\Support\Facades\DB;
 
 class AddAgentService
 {
     public function addAgent(Ticket $ticket, int $agent): Ticket
     {
-        if ($this->ticketValidation($ticket)) {
-            throw new Exception('No le puedes asignar un agente a este ticket');
-        }
-        $agent = $this->userValidation($agent);
-        if (! $agent) {
-            throw new Exception('Este usuario no existe en la base de datos');
-        }
-        if (! $this->rolValidation($agent)) {
-            throw new Exception('Este usuario no es del rol agente');
-        }
-        $ticket->update([
-            'agent_id' => $agent->id,
-            'status' => Status::INPROGRESS,
-        ]);
-        return $ticket;
+        return DB::transaction(function () use ($ticket, $agent) {
+            //Esto se asegura que realmente tengamos el ticket actualizado en cuanto a sus datos e información
+            $ticket = Ticket::where('id', $ticket->id)->lockForUpdate()->firstOrFail();
+
+            if ($this->ticketValidation($ticket)) {
+                throw new Exception('No le puedes asignar un agente a este ticket');
+            }
+            $agent = $this->userValidation($agent);
+            if (! $agent) {
+                throw new Exception('Este usuario no existe en la base de datos');
+            }
+            if (! $this->rolValidation($agent)) {
+                throw new Exception('Este usuario no es del rol agente');
+            }
+
+            $ticket->update([
+                'agent_id' => $agent->id,
+                'status' => Status::INPROGRESS,
+            ]);
+
+            return $ticket;
+        });
     }
     public function ticketValidation(Ticket $ticket)
     {

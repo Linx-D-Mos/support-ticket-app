@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Traits\HasTimeWindow;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class File extends Model
@@ -19,5 +20,9 @@ class File extends Model
     public function fileable(): MorphTo
     {
         return $this->morphTo();
+    }
+    public function audits(): MorphMany
+    {
+        return $this->morphMany(Audit::class,'auditable');
     }
 }

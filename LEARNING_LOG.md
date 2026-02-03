@@ -638,3 +638,74 @@ Cerré los ciclos pendientes de gestión de contenido:
 Tickets & Answers: Implementación completa de update (solo campos permitidos) y delete (Soft Deletes donde aplica), respetando las nuevas restricciones de tiempo.
 
 Archivos: Capacidad de eliminar adjuntos específicos sin borrar todo el ticket, validando permisos de propiedad.
+
+[03-02-2026] - Race Conditions y Bloqueo Pesimista
+
+Bloqueo Pesimista (lockForUpdate): Aprendí a evitar que dos procesos modifiquen el mismo registro simultáneamente.
+
+Importante: Siempre debe ir dentro de una transacción de BD (DB::transaction).
+
+Tip Senior: Es vital recargar el modelo desde la BD al aplicar el lock para asegurar que tenemos los datos más recientes justo antes de validar.
+
+Testing de Excepciones: No solo se testea el "camino feliz". Usar toThrow en Pest permite asegurar que nuestras reglas de negocio disparan los errores correctos ante datos inválidos.
+
+Refactorización de Servicios: Separar la lógica de "Asignación" (cambiar de agente) de la de "Adición" (poner el primer agente) permite reglas de validación distintas y más claras.
+
+# [03-02-2026] - Auditoría de Datos y JSON en PostgreSQL
+
+## 📝 Aprendizajes del Día
+
+**1. Patrón Observer**
+* Aprendí a usar **Observers** para desacoplar la lógica de registro (logs) de la lógica de negocio.
+* El Observer "espía" los eventos del modelo (`updated`) sin ensuciar el controlador.
+
+**2. Manejo de JSON en Eloquent**
+* **Problema:** PostgreSQL espera un string JSON, pero PHP envía un array.
+* **Solución:** Usar el casting en el modelo. Esto automatiza la serialización (Array -> JSON) y deserialización (JSON -> Array).
+    ```php
+    protected $casts = [
+        'campo' => 'array'
+    ];
+    ```
+
+**3. Testing de JSON**
+* Aprendí a validar valores específicos dentro de una columna JSON usando la sintaxis de array en **Pest**:
+    ```php
+    expect($audit->old_values['status'])->toBe(...);
+    ```
+* Esto evita "falsos positivos" donde el registro se crea pero guarda datos vacíos.
+
+
+## 🗺️ Hoja de Ruta: Finalización del Proyecto (The Polish Phase)
+
+Aquí tienes las tareas restantes para dejar el sistema listo para producción, clasificadas según si es aplicación de conocimientos previos o teoría nueva.
+
+### 1. Completar el Ciclo de Auditoría
+- [ ] **Descripción:** Tu Observer actual solo maneja `updated`. Si se crea un ticket o se elimina, no se registra nada.
+- **Tarea:** Implementar los métodos `created` y `deleted` (o `restored` si usas SoftDeletes) en el `AuditObserver`.
+- **Reto:** En `created`, `old_values` es *null*. En `deleted`, `new_values` es *null*.
+- **Tipo:** 🔨 Aplicación (Lógica condicional básica).
+- **Dificultad:** 🟢 Baja.
+
+### 2. Sistema de Notificaciones (The Laravel Way)
+- [ ] **Descripción:** Laravel tiene una capa superior llamada **Notifications** que permite enviar el mismo mensaje por Email, Slack, SMS o guardarlo en Base de Datos con una sola clase, reemplazando el uso manual de Mailables/Events.
+- **Tarea:** Crear una notificación `TicketUpdatedNotification` que se envíe cuando el ticket cambie de estado o se asigne un agente.
+- **Tipo:** 🧠 Nuevo Conocimiento (Clase Notification vs Mailable).
+- **Dificultad:** 🟡 Media.
+
+### 3. Gestión de Adjuntos (Archivos)
+- [ ] **Descripción:** Ya tienes el modelo `File` y la relación polimórfica, pero falta la API para subir y descargar.
+- **Tarea:**
+    * Endpoint `POST /tickets/{id}/files`: Subir evidencia extra.
+    * Endpoint `GET /files/{uuid}`: Descarga segura (Signed URLs).
+- **Tipo:** 🔨 Aplicación (Recuperar conocimientos del Proyecto 2: E-commerce).
+- **Dificultad:** 🟡 Media (Repaso de Storage y Signed URLs).
+
+### 4. Estandarización de Errores (Exception Handling)
+- [ ] **Descripción:** Si un usuario pide el ticket 9999, Laravel devuelve un 404 HTML por defecto. Una API profesional debe devolver JSON.
+- **Tarea:** Configurar `bootstrap/app.php` (Laravel 11) para capturar `ModelNotFoundException` y devolver un JSON estandarizado:
+    ```json
+    { "error": "Recurso no encontrado", "code": 404 }
+    ```
+- **Tipo:** 🧠 Nuevo Conocimiento (Global Exception Handler).
+- **Dificultad:** 🟢 Baja/Media.

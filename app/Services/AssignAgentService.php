@@ -8,23 +8,30 @@ use App\Events\TicketAgentReassigned;
 use App\Models\Ticket;
 use App\Models\User;
 use Exception;
+use Illuminate\Support\Facades\DB;
 
 class AssignAgentService
 {
     public function assignAgent(Ticket $ticket, int $agent_id): Ticket
     {
-        if ($this->ticketValidation($ticket)) {
-            throw new Exception('No se puede reasignar un ticket que está cerrado.');
-        }
-        $agent = $this->userValidation($agent_id);
+        return DB::transaction(function () use ($ticket, $agent_id) {
+            // En lugar de solo $ticket->lockForUpdate();
+            //ponemos la busqueda del ticket para asegurarnos que todos sus datos esten completos
+            $ticket = Ticket::where('id', $ticket->id)->lockForUpdate()->firstOrFail();
 
-        if (! $this->rolValidation($agent)) {
-            throw new Exception('El usuario seleccionado no tiene el rol de agente.');
-        }
+            if ($this->ticketValidation($ticket)) {
+                throw new Exception('No se puede reasignar un ticket que está cerrado.');
+            }
+            $agent = $this->userValidation($agent_id);
 
-        $ticket->update(['agent_id' => $agent->id]);
-        TicketAgentReassigned::dispatch($ticket);
-        return $ticket;
+            if (! $this->rolValidation($agent)) {
+                throw new Exception('El usuario seleccionado no tiene el rol de agente.');
+            }
+
+            $ticket->update(['agent_id' => $agent->id]);
+            TicketAgentReassigned::dispatchAfterResponse($ticket);
+            return $ticket;
+        });
     }
     public function ticketValidation(Ticket $ticket)
     {

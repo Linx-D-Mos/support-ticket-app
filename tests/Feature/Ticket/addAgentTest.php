@@ -18,3 +18,15 @@ test('example', function () {
         ->agent_id)
         ->toBe($user->id);
 });
+test('fails when try to add a agent ', function(){
+    $user = User::factory()->agent()->create();
+    $agent = User::factory()->agent()->create();
+    $intruder = User::factory()->agent()->create(); 
+    $ticket = Ticket::factory()->assignedTo($agent)->createdBy($user)->create();
+    expect($ticket->agent_id)
+    ->toBe($agent->id);
+
+    $this->actingAs($intruder)
+    ->postJson("/api/tickets/{$ticket->id}/addAgent", ['agent_id' => $intruder->id])
+    ->assertStatus(403);
+});

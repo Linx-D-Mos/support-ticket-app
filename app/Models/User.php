@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -55,6 +56,7 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+    //Relaciones
     public function rol(): BelongsTo
     {
         return $this->belongsTo(Rol::class);
@@ -63,8 +65,19 @@ class User extends Authenticatable
     {
         return $this->hasMany(Answer::class);
     }
+    public function performedActions(): HasMany
+    {
+        return $this->hasMany(Audit::class);
+    }
+    public function audits(): MorphMany
+    {
+        return $this->morphMany(Audit::class,'auditable');
+    } 
+
+    //Helper Method
     public function hasRole(RolEnum $role): bool
     {
-        return $this->rol()->where('name', $role)->exists();
+        //return $this->rol()->where('name', $role)->exists();
+        return $this->rol?->name === $role;
     }
 }

@@ -31,6 +31,8 @@ class Ticket extends Model
         'status' => Status::class,
         'priority' => Priority::class,
     ];
+
+    //Relationships
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
@@ -51,6 +53,12 @@ class Ticket extends Model
     {
         return $this->morphMany(File::class, 'fileable');
     }
+    public function audits(): MorphMany
+    {
+        return $this->morphMany(Audit::class, 'auditable');
+    }
+
+    //Helper Methods
     public function hasStatus(Status $status): bool
     {
         return $this->status === $status;
@@ -60,6 +68,7 @@ class Ticket extends Model
         return $this->priority === $priority;
     }
 
+    //scopes
         public function scopeStatus($query, ?string $status)
     {
         if ($status) {
