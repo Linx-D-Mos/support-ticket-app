@@ -805,3 +805,8 @@ He decidido extender el Proyecto 3 para reforzar las bases y convertir los conoc
 
 ### 🛡️ Regla de Oro para esta Fase
 **"Strict TDD Mode":** Prohibido escribir una sola línea de lógica en el Controlador o Servicio sin haber visto fallar un test primero. Esto es para forzar el hábito de pensar antes de codificar.
+
+### Preparación para Frontend y despliegue
+**"Asegurar que la api sea consumible por una IA o un Frontend Real"**
+    * *Estandarización Json: Respuestas de error y éxito uniformes.
+    * * Preparaicón para Docker/Railway: Revisar variables de entorno y configuraciones para despliegue en Free Tier.
