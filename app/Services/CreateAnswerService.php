@@ -22,13 +22,9 @@ class CreateAnswerService
                         'files' => $dto->files,
                     ]
                 );
-                if($dto->files){
-                    foreach($dto->files as $file){
-                        $path = $file->store('answer/attachments', 'public');
-                        $answer->files()->create(['file_path' => $path]);
-                    }
-                }
-                return $answer;
+                $service = App(FileService::class);
+                $answer = $service->storeFile($answer, $dto->files);
+                return $answer['load'];
             }
         );
          if (! $answer) {

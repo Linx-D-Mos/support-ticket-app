@@ -23,6 +23,8 @@ class UpdateAnswerRequest extends FormRequest
     {
         return [
             'body' => 'required|string',
+            'files' => 'array',
+            'files.*' => 'mimes:png,jpeg,jpg,pdf,docx,xlsx|max:10240',
         ];
     }
 }

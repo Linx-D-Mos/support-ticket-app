@@ -270,12 +270,14 @@ class TicketController extends Controller
     {
         $this->authorize('update', $ticket);
         $validated = $request->validated();
+        $files = $request->file('files');
         $dto = new UpdateTicketDTO(
             ticket_id: $ticket->id,
             user_id: $request->user()->id,
             title: $validated['title'] ?? $ticket->title,
             priority: $validated['priority'] ?? $ticket->priority->value,
             labels: $validated['labels'] ?? null,
+            files: $files ?? null,
         );
         $ticket = $service->updateTicket($dto);
         return (new TicketResource($ticket))

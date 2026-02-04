@@ -12,6 +12,7 @@ readonly Class  UpdateTicketDTO
         public string $title,
         public string $priority,
         public ?array  $labels = null,
+        public ?array $files = null,
     ) {}
 
     public static function fromRequest($request): self
@@ -22,6 +23,7 @@ readonly Class  UpdateTicketDTO
             title: $request->input('title'),
             priority: $request->input('priority'),
             labels: $request->input('labels'),
+            files: $request->input('files'),
         );
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Enums\RolEnum;
 use App\Models\File;
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
@@ -72,5 +73,14 @@ class FilePolicy
     public function forceDelete(User $user, File $file): bool
     {
         return false;
+    }
+    public function download(User $user, File $file): Response
+    {
+        $parentModel = $file->fileable;
+
+        if($user->id !== $parentModel->user_id || ($user->id !== $parentModel->agent_id && !$user->hasRole(RolEnum::ADMIN))){
+            return Response::deny('Este archivo no te pertenece');
+        }
+        return Response::allow();
     }
 }

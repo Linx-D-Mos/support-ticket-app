@@ -65,8 +65,10 @@ class AnswerController extends Controller
     public function update(UpdateAnswerRequest $request, Ticket $ticket, Answer $answer, UpdateAnswerService $service)
     {
         $this->authorize('update', $answer);
+        $files = $request->file('files');
         $dto = new UpdateAnswerDTO(
             body: $request->validated()['body'],
+            files: $files,
         );
         $answer = $service->updateAnswer($answer, $dto);
         return (new AnswerResource($answer->load('user', 'files')))

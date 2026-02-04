@@ -23,5 +23,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::apiResource('tickets.answers', AnswerController::class)->only(['store', 'update','destroy']);
     Route::get('/dashboard/stats', [DashboardController::class, 'stats']);
 
+    Route::get('/{file}/download', [FileController::class, 'download']);
     Route::apiResource('files', FileController::class)->only('destroy');
 });

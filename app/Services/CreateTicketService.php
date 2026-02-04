@@ -12,29 +12,27 @@ use Illuminate\Support\Facades\DB;
 
 class CreateTicketService
 {
-    public function createTicket(CreateTicketDTO $data): Ticket
+    public function createTicket(CreateTicketDTO $dto): Ticket
     {
         $ticket = DB::transaction(
-            function () use ($data) {
+            function () use ($dto) {
                 $ticket = Ticket::create([
-                    'user_id' => $data->userId,
-                    'title' => $data->title,
-                    'priority' => $data->priority,
+                    'user_id' => $dto->userId,
+                    'title' => $dto->title,
+                    'priority' => $dto->priority,
                     'status' => Status::OPEN,
                 ]);
 
-                if ($data->files) {
-                    foreach ($data->files as $file) {
-                        $path = $file->store('tickets/attachments', 'public');
-                        $ticket->files()->create(['file_path' => $path]);
-                    }
-                }
-                if ($data->labels) {
-                    $labelIds = Label::where('name', $data->labels)->pluck('id');
-                    $ticket->labels()->attach($labelIds);
-                }
+                // if ($dto->files) {
+                //     foreach ($dto->files as $file) {
+                //         $path = $file->store('tickets/attachments', 'public');
+                //         $ticket->files()->create(['file_path' => $path]);
+                //     }
+                // }
+                $service = app(FileService::class);
+                $ticket = $service->storeFile($ticket,$dto->files);
 
-                return $ticket;
+                return $ticket['files'];
             }
         );
         if (! $ticket) {

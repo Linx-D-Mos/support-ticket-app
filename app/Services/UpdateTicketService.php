@@ -9,10 +9,12 @@ use App\Models\Ticket;
 use App\Models\User;
 use App\Notifications\TicketUpdatedNotification;
 use Exception;
+use Illuminate\Support\Facades\DB;
 
 class UpdateTicketService 
 {
     public function updateTicket(UpdateTicketDTO $dto){
+        return DB::transaction(function () use ($dto){
         $ticket = Ticket::find($dto->ticket_id);
         $user = $dto->user_id instanceof User ? $dto->user_id : User::find($dto->user_id);
 
@@ -34,7 +36,11 @@ class UpdateTicketService
             }
         }
         $this->sendNotification($ticket,$user);
+        $service = App(FileService::class);
+        $ticket = $service->storeFile($ticket,$dto->files);
         return $ticket->load('labels', 'user', 'agent');
+        });
+
     }   
     public function validateTicket(Ticket $ticket, User $user){
         // Allow agents to bypass the 10-minute rule

@@ -30,6 +30,8 @@ class UpdateTicketRequest extends FormRequest
             'priority' => [new Enum(Priority::class)],
             'labels' => 'array',
             'labels.*' => [new Enum(Type::class)],
+            'files' => 'array',
+            'files.*' => 'mimes:png,jpeg,jpg,pdf,docx,xlsx|max:10240',
         ];
     }
 }
