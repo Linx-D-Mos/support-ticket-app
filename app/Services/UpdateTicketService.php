@@ -4,10 +4,10 @@ namespace App\Services;
 
 use App\DTOs\UpdateTicketDTO;
 use App\Enums\RolEnum;
-use App\Enums\Status;
 use App\Models\Label;
 use App\Models\Ticket;
 use App\Models\User;
+use App\Notifications\TicketUpdatedNotification;
 use Exception;
 
 class UpdateTicketService 
@@ -33,6 +33,7 @@ class UpdateTicketService
                 $ticket->labels()->sync($labelIds);
             }
         }
+        $this->sendNotification($ticket,$user);
         return $ticket->load('labels', 'user', 'agent');
     }   
     public function validateTicket(Ticket $ticket, User $user){
@@ -40,6 +41,28 @@ class UpdateTicketService
         if (!$user->hasRole(RolEnum::CUSTOMER)) {
             return true;
         }
-        return ($ticket->hasStatus(Status::OPEN) && ($ticket->created_at->diffInMinutes(now())) <= 10) ;
+        return ($ticket->created_at->diffInMinutes(now())) <= 10 ;
+    }
+    public function sendNotification(Ticket $ticket, User $user){
+        $recipient = null;
+        if($user->id === $ticket->user_id){
+            if($ticket->agent_id){
+                $recipient = User::find($ticket->agent_id);
+            }
+        }
+        else{
+            $recipient = User::find($ticket->user_id);
+        }
+        //Caso 3 fallback: Si después de lo anterior nadie va a recibir la notificación buscamos a un administrador
+        if(! $recipient){
+            $recipient = User::whereHas('rol', fn($q)=>
+                $q->where('name', RolEnum::ADMIN)
+            )->first();
+        }
+        if($recipient && $recipient->id !== $user->id){
+            //Recipient es el que recibe la notificación y $user es el que realiza la acción.
+            $recipient->notify(new TicketUpdatedNotification($ticket,$user));
+        }
+
     }
 }

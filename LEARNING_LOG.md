@@ -709,3 +709,99 @@ Aquí tienes las tareas restantes para dejar el sistema listo para producción, 
     ```
 - **Tipo:** 🧠 Nuevo Conocimiento (Global Exception Handler).
 - **Dificultad:** 🟢 Baja/Media.
+
+Actualización del LEARNING_LOG.md
+Vamos a registrar el cierre del módulo de Auditoría. Agrega esto a tu bitácora:
+
+[03-02-2026] - Auditoría Completa y Ciclo de Vida del Modelo
+
+Ciclo de Vida de Eloquent: Implementé la auditoría para todos los eventos del modelo:
+
+created: Registra valores iniciales en new_values.
+
+updated: Registra el delta (cambio) en old y new.
+
+deleted: Registra lo que se perdió en old_values.
+
+restored: Registra la recuperación del registro.
+
+Manejo de Variables: Aprendí que cada método del Observer tiene su propio alcance (scope). Las variables no se comparten entre métodos; deben definirse explícitamente en cada función para evitar errores de Undefined variable.
+
+# [04-02-2026] - Notificaciones Multicanal y Lógica de Negocio
+
+## 📝 Aprendizajes del Día
+
+**1. Canales de Notificación**
+* Aprendí a usar el método `via()` para enviar alertas por múltiples canales (ej. **mail** y **database**) simultáneamente.
+
+**2. Notificaciones en Base de Datos**
+* **Configuración:** Se genera la tabla necesaria con el comando:
+    ```bash
+    php artisan notifications:table
+    ```
+* **Estructura:** El método `toArray` define el estructura JSON que se guarda en la columna `data`.
+* **Uso:** Ideal para alimentar componentes de UI como la "campanita de notificaciones" en el frontend.
+
+**3. Lógica de "Contraparte" (Counterparty)**
+* Implementé una lógica para determinar el destinatario de la notificación dinámicamente según quién realiza la acción:
+    * Si edita **Cliente** -> Notificar al **Agente**.
+    * Si edita **Agente** -> Notificar al **Cliente**.
+
+### 💡 Lección Clave
+* **Constructor:** Al instanciar la Notificación, pasar siempre el **Actor** (quien realiza la acción) para tener contexto.
+* **Método `toMail`:** Usar la variable `$notifiable` (inyectada automáticamente por Laravel) para saludar al destinatario correcto, en lugar de intentar adivinarlo desde el constructor.
+
+# [04-02-2026] - Manejo Global de Excepciones (Laravel 11)
+
+## 📝 Aprendizajes del Día
+
+**1. Configuración Centralizada (Laravel 11)**
+* **Archivo clave:** `bootstrap/app.php`.
+* Aprendí que en esta nueva versión, las excepciones ya no van en un "Handler" separado, sino que se configuran fluidamente aquí usando el método `->withExceptions()`.
+
+**2. Renderable Exceptions**
+* Utilicé el método `render` dentro de la configuración para capturar excepciones específicas como `NotFoundHttpException` y personalizar su respuesta.
+
+**3. Negociación de Contenido**
+* **Problema:** No se debe devolver una respuesta JSON cruda a un usuario que navega vía web (navegador).
+* **Solución:** Diferenciar clientes usando condicionales en el request:
+    ```php
+    if ($request->is('api/*') || $request->expectsJson()) { ... }
+    ```
+
+**4. HTTP Status Codes**
+* **Regla de oro:** El cuerpo del JSON no es suficiente. Siempre asegurar que el *header* HTTP coincida con el error.
+* *Ejemplo:* Pasar el código explícitamente como segundo argumento:
+    ```php
+    response()->json(['error' => '...'], 404);
+    ```
+
+## 📅 [04-02-2026] - Extensión de Proyecto: Fase de Consolidación y Maestría
+
+He decidido extender el Proyecto 3 para reforzar las bases y convertir los conocimientos teóricos en memoria muscular. El objetivo no es solo "terminar", sino dominar el flujo de trabajo.
+
+### 🗺️ Hoja de Ruta de Consolidación
+
+#### 1. 📂 Gestión Avanzada de Archivos (Polimorfismo Completo)
+**Meta:** Dejar de temerle al `Storage` y manejar archivos como un recurso completo.
+* **Upload:** Implementar subida de archivos adjuntos en Tickets y Respuestas (usando la relación polimórfica existente).
+* **Download:** Implementar descarga segura (Signed URLs) para agentes y dueños.
+* **Delete:** Permitir eliminar un adjunto (con validación de permisos: solo el dueño puede borrar su archivo).
+* **Testing:** Probar la subida y eliminación usando `Storage::fake()`.
+
+#### 2. 🔔 Ecosistema de Notificaciones
+**Meta:** Que el sistema se sienta "vivo" y reactivo.
+* **Mapa de Eventos:** Identificar todos los disparadores faltantes:
+    * `TicketCreated` -> Email de confirmación al cliente + Aviso a Admin.
+    * `TicketClosed` -> Email de encuesta/cierre al cliente.
+    * `TicketAssigned` -> Email al Agente asignado.
+* **Implementación:** Usar el sistema de Notificaciones (BD + Mail) para todos estos casos.
+
+#### 3. 🧠 "The Developer Playbook" (Documentación Conceptual)
+**Meta:** Crear mi propia "Biblia de Conceptos" para no olvidar los fundamentos.
+* Crear un documento (o sección aquí) que explique **CUÁNDO** y **POR QUÉ** usar cada herramienta, no solo el "cómo".
+    * *Ejemplo:* "¿Cuándo uso un Accessor? -> Cuando quiero cambiar el formato visual sin tocar la BD."
+    * *Ejemplo:* "¿Por qué TDD? -> Para definir la meta antes de correr."
+
+### 🛡️ Regla de Oro para esta Fase
+**"Strict TDD Mode":** Prohibido escribir una sola línea de lógica en el Controlador o Servicio sin haber visto fallar un test primero. Esto es para forzar el hábito de pensar antes de codificar.

@@ -47,7 +47,7 @@ class TicketPolicy
             return Response::deny('No puedes modificar un ticket que ya está cerrado.');
         }
 
-        if ($user->id === $ticket->user_id && !$ticket->isEditableInTimeWindow(15)) {
+        if ($user->id === $ticket->user_id && !$ticket->isEditableInTimeWindow(10)) {
             return Response::deny('El tiempo para editar tu ticket ha expirado (máximo 10 minutos).');
         }
 
