@@ -480,8 +480,8 @@ endpoints:
         description: 'Etiquetas asociadas al ticket.'
         required: true
         example:
-          - hardware
-          - impresora
+          - bug
+          - feature
         type: 'string[]'
         enumValues: []
         exampleWasSpecified: true
@@ -503,7 +503,7 @@ endpoints:
         name: 'labels.*'
         description: 'Nombre de la etiqueta.'
         required: true
-        example: '"hardware"'
+        example: '"bug"'
         type: string
         enumValues: []
         exampleWasSpecified: true
@@ -524,8 +524,8 @@ endpoints:
       title: '"Mi impresora no funciona"'
       priority: '"high"'
       labels:
-        - hardware
-        - impresora
+        - bug
+        - feature
       files: null
     fileParameters: []
     responses:
@@ -566,6 +566,85 @@ endpoints:
           }
         headers: []
         description: 'Datos inválidos'
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - GET
+    uri: 'api/tickets/{id}'
+    metadata:
+      custom: []
+      groupName: 'Gestión de Tickets'
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Mostrar un ticket con su hilo de respuestas.'
+      description: 'Devuelve la información detallada de un ticket, incluyendo archivos, etiquetas, respuestas y usuarios relacionados.'
+      authenticated: true
+      deprecated: false
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      id:
+        custom: []
+        name: id
+        description: 'The ID of the ticket.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      ticket:
+        custom: []
+        name: ticket
+        description: 'El ID del ticket.'
+        required: true
+        example: 16
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      id: 1
+      ticket: 16
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 200
+        content: '{"data":{"id":42,"title":"accusantium","priority":"low","status":"open","customer":{"id":39,"name":"Ms. Elisabeth Okuneva"},"agent":null,"last_reply_at":null,"resolve_at":null,"close_at":null}}'
+        headers: []
+        description: ''
+      -
+        custom: []
+        status: 403
+        content: |-
+          {
+            "message": "This action is unauthorized."
+          }
+        headers: []
+        description: 'No autorizado'
+      -
+        custom: []
+        status: 404
+        content: |-
+          {
+            "message": "No query results for model [App\\Models\\Ticket] 9999"
+          }
+        headers: []
+        description: 'Ticket no encontrado'
     responseFields: []
     auth: []
     controller: null
@@ -619,23 +698,6 @@ endpoints:
     queryParameters: []
     cleanQueryParameters: []
     bodyParameters:
-      status:
-        custom: []
-        name: status
-        description: ''
-        required: false
-        example: open
-        type: string
-        enumValues:
-          - open
-          - 'in progress'
-          - pending
-          - resolved
-          - elevated
-          - closed
-        exampleWasSpecified: false
-        nullable: false
-        deprecated: false
       title:
         custom: []
         name: title
@@ -671,17 +733,6 @@ endpoints:
         exampleWasSpecified: true
         nullable: false
         deprecated: false
-      'labels.*':
-        custom: []
-        name: 'labels.*'
-        description: 'optional Nombre de la etiqueta.'
-        required: false
-        example: '"hardware"'
-        type: string
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: false
-        deprecated: false
       files:
         custom: []
         name: files
@@ -689,6 +740,17 @@ endpoints:
         required: false
         example: null
         type: 'string[]'
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      'labels.*':
+        custom: []
+        name: 'labels.*'
+        description: 'optional Nombre de la etiqueta.'
+        required: false
+        example: '"hardware"'
+        type: string
         enumValues: []
         exampleWasSpecified: true
         nullable: false
@@ -705,7 +767,6 @@ endpoints:
         nullable: false
         deprecated: false
     cleanBodyParameters:
-      status: open
       title: '"Impresora no imprime"'
       priority: '"medium"'
       labels:
@@ -766,6 +827,243 @@ endpoints:
           }
         headers: []
         description: 'Datos inválidos'
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - POST
+    uri: 'api/tickets/{ticket_id}/answers'
+    metadata:
+      custom: []
+      groupName: 'Gestión de Tickets'
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Crear una respuesta.'
+      description: 'Almacena una nueva respuesta asociada a un ticket específico.'
+      authenticated: true
+      deprecated: false
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      ticket_id:
+        custom: []
+        name: ticket_id
+        description: 'The ID of the ticket.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      ticket:
+        custom: []
+        name: ticket
+        description: 'El ID del ticket al que pertenece la respuesta.'
+        required: true
+        example: 16
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      ticket_id: 1
+      ticket: 16
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      body:
+        custom: []
+        name: body
+        description: 'El contenido de la respuesta.'
+        required: true
+        example: '"He revisado el caso y necesitamos más información."'
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      files:
+        custom: []
+        name: files
+        description: 'optional Archivos adjuntos.'
+        required: false
+        example: null
+        type: 'string[]'
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      'files.*':
+        custom: []
+        name: 'files.*'
+        description: 'optional Archivo adjunto (png, jpeg, jpg, pdf, docx, xlsx, máx 10MB).'
+        required: false
+        example: null
+        type: file
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanBodyParameters:
+      body: '"He revisado el caso y necesitamos más información."'
+      files: null
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 200
+        content: '{"data":{"id":13,"body":"Et animi quos velit et fugiat. Nihil accusantium harum mollitia modi deserunt. Ab provident perspiciatis quo omnis nostrum aut adipisci.","created_at":"2026-02-05T21:15:11.000000Z","user":{"id":30,"name":"Juana Williamson","user rol":"customer"}}}'
+        headers: []
+        description: ''
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - PUT
+      - PATCH
+    uri: 'api/tickets/{ticket_id}/answers/{id}'
+    metadata:
+      custom: []
+      groupName: 'Gestión de Tickets'
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Actualizar una respuesta.'
+      description: 'Actualiza el contenido de una respuesta existente. Solo el autor puede editarla.'
+      authenticated: true
+      deprecated: false
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      ticket_id:
+        custom: []
+        name: ticket_id
+        description: 'The ID of the ticket.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      id:
+        custom: []
+        name: id
+        description: 'The ID of the answer.'
+        required: true
+        example: 3
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      ticket:
+        custom: []
+        name: ticket
+        description: 'El ID del ticket.'
+        required: true
+        example: 16
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      answer:
+        custom: []
+        name: answer
+        description: 'El ID de la respuesta.'
+        required: true
+        example: 16
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      ticket_id: 1
+      id: 3
+      ticket: 16
+      answer: 16
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      body:
+        custom: []
+        name: body
+        description: 'El contenido actualizado.'
+        required: true
+        example: '"Corrección: El problema persiste."'
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      files:
+        custom: []
+        name: files
+        description: 'optional Archivos adjuntos.'
+        required: false
+        example:
+          - architecto
+        type: 'string[]'
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      'files.*':
+        custom: []
+        name: 'files.*'
+        description: 'optional Archivo adjunto.'
+        required: false
+        example: null
+        type: file
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanBodyParameters:
+      body: '"Corrección: El problema persiste."'
+      files:
+        - architecto
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 200
+        content: '{"data":{"id":14,"body":"Et animi quos velit et fugiat. Nihil accusantium harum mollitia modi deserunt. Ab provident perspiciatis quo omnis nostrum aut adipisci.","created_at":"2026-02-05T21:15:11.000000Z","user":{"id":33,"name":"Jerel Jones","user rol":"customer"}}}'
+        headers: []
+        description: ''
+      -
+        custom: []
+        status: 403
+        content: |-
+          {
+            "message": "This action is unauthorized."
+          }
+        headers: []
+        description: 'No autorizado'
+      -
+        custom: []
+        status: 404
+        content: |-
+          {
+            "message": "No query results for model [App\\Models\\Answer]"
+          }
+        headers: []
+        description: 'No encontrado'
     responseFields: []
     auth: []
     controller: null
