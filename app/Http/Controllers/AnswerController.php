@@ -115,6 +115,18 @@ class AnswerController extends Controller
     /**
      * Remove the specified resource from storage.
      */
+    /**
+     * Eliminar respuesta.
+     *
+     * Elimina una respuesta específica.
+     *
+     * @group Gestión de Tickets
+     * @authenticated
+     * @urlParam ticket integer required El ID del ticket.
+     * @urlParam answer integer required El ID de la respuesta.
+     *
+     * @response 204 scenario="Eliminado con éxito" {}
+     */
     public function destroy(Ticket $ticket, Answer $answer)
     {
         $this->authorize('delete', $answer);

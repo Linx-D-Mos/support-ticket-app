@@ -256,6 +256,20 @@ class TicketController extends Controller
     }
 
 
+    /**
+     * Eliminar un ticket.
+     *
+     * Elimina el ticket especificado de la base de datos.
+     *
+     * @group Gestión de Tickets
+     * @authenticated
+     * @urlParam ticket integer required El ID del ticket.
+     *
+     * @response 204 scenario="Ticket eliminado con éxito" {}
+     * @response 403 scenario="No autorizado" {
+     *   "message": "This action is unauthorized."
+     * }
+     */
     public function destroy(Ticket $ticket)
     {
         $this->authorize('delete', $ticket);
@@ -264,6 +278,18 @@ class TicketController extends Controller
         return response()->noContent();
     }
 
+    /**
+     * Restaurar un ticket.
+     *
+     * Restaura un ticket previamente eliminado (soft delete).
+     *
+     * @group Gestión de Tickets
+     * @authenticated
+     * @urlParam id integer required El ID del ticket a restaurar.
+     *
+     * @apiResource App\Http\Resources\TicketResource
+     * @apiResourceModel App\Models\Ticket
+     */
     public function restore(Request $request, string $id, RestoreTicketService $service)
     {
 
@@ -275,6 +301,18 @@ class TicketController extends Controller
         ->setStatusCode(Response::HTTP_OK);
     }
 
+    /**
+     * Añadir agente (Auto-asignación).
+     *
+     * Permite a un agente asignarse a sí mismo al ticket.
+     *
+     * @group Gestión de Tickets
+     * @authenticated
+     * @urlParam ticket integer required El ID del ticket.
+     *
+     * @apiResource App\Http\Resources\TicketResource
+     * @apiResourceModel App\Models\Ticket
+     */
     public function addAgent(Ticket $ticket, addAgentTicketRequest $request, AddAgentService $service)
     {
         $this->authorize('addAgent', $ticket);
@@ -399,6 +437,19 @@ class TicketController extends Controller
             ->setStatusCode(Response::HTTP_OK);
     }
 
+    /**
+     * Asignar agente.
+     *
+     * Asignar un agente específico a un ticket.
+     *
+     * @group Gestión de Tickets
+     * @authenticated
+     * @urlParam ticket integer required El ID del ticket.
+     * @bodyParam agent_id integer required El ID del agente a asignar. Example: 2
+     *
+     * @apiResource App\Http\Resources\TicketResource
+     * @apiResourceModel App\Models\Ticket
+     */
     public function assign(Ticket $ticket,AssignAgentRequest $request, AssignAgentService $service){
         $this->authorize('assign', $ticket);
         $ticket = $service->assignAgent($ticket, $request->validated(['agent_id']));
