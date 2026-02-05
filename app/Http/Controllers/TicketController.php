@@ -161,10 +161,54 @@ class TicketController extends Controller
      * Recupera la información de un ticket específico junto con su hilo de respuestas.
      *
      * @urlParam ticket integer required El ID del ticket.
-     * @apiResource App\Http\Resources\TicketResource
-     * @apiResourceModel App\Models\Ticket
      *
-     *
+     * @response 200 {
+     *   "data": {
+     *     "id": 1,
+     *     "title": "Mi impresora no funciona",
+     *     "priority": "high",
+     *     "status": "open",
+     *     "customer": {
+     *       "id": 5,
+     *       "name": "Juan Pérez"
+     *     },
+     *     "agent": {
+     *       "id": 2,
+     *       "name": "Agente Soporte"
+     *     },
+     *     "last_reply_at": "2024-06-01T10:30:00Z",
+     *     "resolve_at": null,
+     *     "close_at": null,
+     *     "files": [
+     *       {
+     *         "id": 1,
+     *         "name": "error_log.png",
+     *         "path": "tickets/1/error_log.png"
+     *       }
+     *     ],
+     *     "labels": [
+     *       {
+     *         "label": "bug"
+     *       },
+     *       {
+     *         "label": "hardware"
+     *       }
+     *     ],
+     *     "answers": [
+     *       {
+     *         "id": 10,
+     *         "body": "Hemos recibido su solicitud. Un técnico la revisará pronto.",
+     *         "created_at": "2024-06-01T10:35:00Z",
+     *         "user": {
+     *           "id": 2,
+     *           "name": "Agente Soporte",
+     *           "user rol": "admin"
+     *         },
+     *         "files": []
+     *       }
+     *     ]
+     *   }
+     * }
      *
      * @response 403 scenario="No autorizado" {
      *   "message": "This action is unauthorized."
