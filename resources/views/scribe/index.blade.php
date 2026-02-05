@@ -774,12 +774,12 @@ fetch(url, {
 
 <code class="language-json" style="max-height: 300px;">{
     &quot;data&quot;: {
-        &quot;id&quot;: 43,
+        &quot;id&quot;: 47,
         &quot;title&quot;: &quot;accusantium&quot;,
         &quot;priority&quot;: &quot;low&quot;,
         &quot;status&quot;: &quot;open&quot;,
         &quot;customer&quot;: {
-            &quot;id&quot;: 40,
+            &quot;id&quot;: 44,
             &quot;name&quot;: &quot;Ms. Elisabeth Okuneva&quot;
         },
         &quot;agent&quot;: null,
@@ -929,12 +929,12 @@ fetch(url, {
 
 <code class="language-json" style="max-height: 300px;">{
     &quot;data&quot;: {
-        &quot;id&quot;: 44,
+        &quot;id&quot;: 48,
         &quot;title&quot;: &quot;deserunt&quot;,
         &quot;priority&quot;: &quot;low&quot;,
         &quot;status&quot;: &quot;open&quot;,
         &quot;customer&quot;: {
-            &quot;id&quot;: 41,
+            &quot;id&quot;: 45,
             &quot;name&quot;: &quot;Ms. Elisabeth Okuneva&quot;
         },
         &quot;agent&quot;: null,
@@ -1540,12 +1540,12 @@ fetch(url, {
 
 <code class="language-json" style="max-height: 300px;">{
     &quot;data&quot;: {
-        &quot;id&quot;: 45,
+        &quot;id&quot;: 49,
         &quot;title&quot;: &quot;perspiciatis&quot;,
         &quot;priority&quot;: &quot;low&quot;,
         &quot;status&quot;: &quot;open&quot;,
         &quot;customer&quot;: {
-            &quot;id&quot;: 42,
+            &quot;id&quot;: 46,
             &quot;name&quot;: &quot;Ms. Elisabeth Okuneva&quot;
         },
         &quot;agent&quot;: null,
@@ -2107,7 +2107,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>optional Archivo adjunto (png, jpeg, jpg, pdf, docx, xlsx, máx 10MB) Example: <code>/tmp/phpiri6r7pn4d7jdh6KiEv</code></p>
+<p>optional Archivo adjunto (png, jpeg, jpg, pdf, docx, xlsx, máx 10MB) Example: <code>/tmp/phpb1n8g2mugoql7oSDBHn</code></p>
                     </div>
                                     </details>
         </div>
@@ -2157,18 +2157,49 @@ fetch(url, {
 
 <code class="language-json" style="max-height: 300px;">{
     &quot;data&quot;: {
-        &quot;id&quot;: 46,
-        &quot;title&quot;: &quot;adipisci&quot;,
-        &quot;priority&quot;: &quot;low&quot;,
+        &quot;id&quot;: 1,
+        &quot;title&quot;: &quot;Mi impresora no funciona&quot;,
+        &quot;priority&quot;: &quot;high&quot;,
         &quot;status&quot;: &quot;open&quot;,
         &quot;customer&quot;: {
-            &quot;id&quot;: 43,
-            &quot;name&quot;: &quot;Ms. Elisabeth Okuneva&quot;
+            &quot;id&quot;: 5,
+            &quot;name&quot;: &quot;Juan P&eacute;rez&quot;
         },
-        &quot;agent&quot;: null,
-        &quot;last_reply_at&quot;: null,
+        &quot;agent&quot;: {
+            &quot;id&quot;: 2,
+            &quot;name&quot;: &quot;Agente Soporte&quot;
+        },
+        &quot;last_reply_at&quot;: &quot;2024-06-01T10:30:00Z&quot;,
         &quot;resolve_at&quot;: null,
-        &quot;close_at&quot;: null
+        &quot;close_at&quot;: null,
+        &quot;files&quot;: [
+            {
+                &quot;id&quot;: 1,
+                &quot;name&quot;: &quot;error_log.png&quot;,
+                &quot;path&quot;: &quot;tickets/1/error_log.png&quot;
+            }
+        ],
+        &quot;labels&quot;: [
+            {
+                &quot;label&quot;: &quot;bug&quot;
+            },
+            {
+                &quot;label&quot;: &quot;hardware&quot;
+            }
+        ],
+        &quot;answers&quot;: [
+            {
+                &quot;id&quot;: 10,
+                &quot;body&quot;: &quot;Hemos recibido su solicitud. Un t&eacute;cnico la revisar&aacute; pronto.&quot;,
+                &quot;created_at&quot;: &quot;2024-06-01T10:35:00Z&quot;,
+                &quot;user&quot;: {
+                    &quot;id&quot;: 2,
+                    &quot;name&quot;: &quot;Agente Soporte&quot;,
+                    &quot;user rol&quot;: &quot;admin&quot;
+                },
+                &quot;files&quot;: []
+            }
+        ]
     }
 }</code>
  </pre>
@@ -2571,7 +2602,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>optional Archivo adjunto (png, jpeg, jpg, pdf, docx, xlsx, máx 10MB) Example: <code>/tmp/phpp8bpcc2uga96e3oJ8rt</code></p>
+<p>optional Archivo adjunto (png, jpeg, jpg, pdf, docx, xlsx, máx 10MB) Example: <code>/tmp/phpifa5plo03a3sdu448Cj</code></p>
                     </div>
                                     </details>
         </div>
@@ -2783,12 +2814,12 @@ fetch(url, {
 
 <code class="language-json" style="max-height: 300px;">{
     &quot;data&quot;: {
-        &quot;id&quot;: 15,
+        &quot;id&quot;: 17,
         &quot;body&quot;: &quot;Et animi quos velit et fugiat. Nihil accusantium harum mollitia modi deserunt. Ab provident perspiciatis quo omnis nostrum aut adipisci.&quot;,
-        &quot;created_at&quot;: &quot;2026-02-05T21:32:35.000000Z&quot;,
+        &quot;created_at&quot;: &quot;2026-02-05T21:43:36.000000Z&quot;,
         &quot;user&quot;: {
-            &quot;id&quot;: 15,
-            &quot;name&quot;: &quot;Emory Collier&quot;,
+            &quot;id&quot;: 22,
+            &quot;name&quot;: &quot;Kole Dickens&quot;,
             &quot;user rol&quot;: &quot;customer&quot;
         }
     }
@@ -2924,7 +2955,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>optional Archivo adjunto (png, jpeg, jpg, pdf, docx, xlsx, máx 10MB). Example: <code>/tmp/phpenjkqv5pc6806Rz4i4r</code></p>
+<p>optional Archivo adjunto (png, jpeg, jpg, pdf, docx, xlsx, máx 10MB). Example: <code>/tmp/php6tgtmjlmdaot2Icl5ek</code></p>
                     </div>
                                     </details>
         </div>
@@ -2989,12 +3020,12 @@ fetch(url, {
 
 <code class="language-json" style="max-height: 300px;">{
     &quot;data&quot;: {
-        &quot;id&quot;: 16,
+        &quot;id&quot;: 18,
         &quot;body&quot;: &quot;Et animi quos velit et fugiat. Nihil accusantium harum mollitia modi deserunt. Ab provident perspiciatis quo omnis nostrum aut adipisci.&quot;,
-        &quot;created_at&quot;: &quot;2026-02-05T21:32:35.000000Z&quot;,
+        &quot;created_at&quot;: &quot;2026-02-05T21:43:36.000000Z&quot;,
         &quot;user&quot;: {
-            &quot;id&quot;: 10,
-            &quot;name&quot;: &quot;Hildegard Lindgren&quot;,
+            &quot;id&quot;: 11,
+            &quot;name&quot;: &quot;Vivien Considine&quot;,
             &quot;user rol&quot;: &quot;customer&quot;
         }
     }
@@ -3176,7 +3207,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>optional Archivo adjunto. Example: <code>/tmp/phpc7cissshgh7aewBQw6Y</code></p>
+<p>optional Archivo adjunto. Example: <code>/tmp/phplc4nlfkf01udeZuanYt</code></p>
                     </div>
                                     </details>
         </div>

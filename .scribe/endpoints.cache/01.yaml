@@ -44,7 +44,7 @@ endpoints:
       -
         custom: []
         status: 200
-        content: '{"data":{"id":43,"title":"accusantium","priority":"low","status":"open","customer":{"id":40,"name":"Ms. Elisabeth Okuneva"},"agent":null,"last_reply_at":null,"resolve_at":null,"close_at":null}}'
+        content: '{"data":{"id":47,"title":"accusantium","priority":"low","status":"open","customer":{"id":44,"name":"Ms. Elisabeth Okuneva"},"agent":null,"last_reply_at":null,"resolve_at":null,"close_at":null}}'
         headers: []
         description: ''
     responseFields: []
@@ -117,7 +117,7 @@ endpoints:
       -
         custom: []
         status: 200
-        content: '{"data":{"id":44,"title":"deserunt","priority":"low","status":"open","customer":{"id":41,"name":"Ms. Elisabeth Okuneva"},"agent":null,"last_reply_at":null,"resolve_at":null,"close_at":null}}'
+        content: '{"data":{"id":48,"title":"deserunt","priority":"low","status":"open","customer":{"id":45,"name":"Ms. Elisabeth Okuneva"},"agent":null,"last_reply_at":null,"resolve_at":null,"close_at":null}}'
         headers: []
         description: ''
     responseFields: []
@@ -484,7 +484,7 @@ endpoints:
       -
         custom: []
         status: 200
-        content: '{"data":{"id":45,"title":"perspiciatis","priority":"low","status":"open","customer":{"id":42,"name":"Ms. Elisabeth Okuneva"},"agent":null,"last_reply_at":null,"resolve_at":null,"close_at":null}}'
+        content: '{"data":{"id":49,"title":"perspiciatis","priority":"low","status":"open","customer":{"id":46,"name":"Ms. Elisabeth Okuneva"},"agent":null,"last_reply_at":null,"resolve_at":null,"close_at":null}}'
         headers: []
         description: ''
     responseFields: []
@@ -809,7 +809,54 @@ endpoints:
       -
         custom: []
         status: 200
-        content: '{"data":{"id":46,"title":"adipisci","priority":"low","status":"open","customer":{"id":43,"name":"Ms. Elisabeth Okuneva"},"agent":null,"last_reply_at":null,"resolve_at":null,"close_at":null}}'
+        content: |-
+          {
+            "data": {
+              "id": 1,
+              "title": "Mi impresora no funciona",
+              "priority": "high",
+              "status": "open",
+              "customer": {
+                "id": 5,
+                "name": "Juan Pérez"
+              },
+              "agent": {
+                "id": 2,
+                "name": "Agente Soporte"
+              },
+              "last_reply_at": "2024-06-01T10:30:00Z",
+              "resolve_at": null,
+              "close_at": null,
+              "files": [
+                {
+                  "id": 1,
+                  "name": "error_log.png",
+                  "path": "tickets/1/error_log.png"
+                }
+              ],
+              "labels": [
+                {
+                  "label": "bug"
+                },
+                {
+                  "label": "hardware"
+                }
+              ],
+              "answers": [
+                {
+                  "id": 10,
+                  "body": "Hemos recibido su solicitud. Un técnico la revisará pronto.",
+                  "created_at": "2024-06-01T10:35:00Z",
+                  "user": {
+                    "id": 2,
+                    "name": "Agente Soporte",
+                    "user rol": "admin"
+                  },
+                  "files": []
+                }
+              ]
+            }
+          }
         headers: []
         description: ''
       -
@@ -1175,7 +1222,7 @@ endpoints:
       -
         custom: []
         status: 200
-        content: '{"data":{"id":15,"body":"Et animi quos velit et fugiat. Nihil accusantium harum mollitia modi deserunt. Ab provident perspiciatis quo omnis nostrum aut adipisci.","created_at":"2026-02-05T21:32:35.000000Z","user":{"id":15,"name":"Emory Collier","user rol":"customer"}}}'
+        content: '{"data":{"id":17,"body":"Et animi quos velit et fugiat. Nihil accusantium harum mollitia modi deserunt. Ab provident perspiciatis quo omnis nostrum aut adipisci.","created_at":"2026-02-05T21:43:36.000000Z","user":{"id":22,"name":"Kole Dickens","user rol":"customer"}}}'
         headers: []
         description: ''
     responseFields: []
@@ -1298,7 +1345,7 @@ endpoints:
       -
         custom: []
         status: 200
-        content: '{"data":{"id":16,"body":"Et animi quos velit et fugiat. Nihil accusantium harum mollitia modi deserunt. Ab provident perspiciatis quo omnis nostrum aut adipisci.","created_at":"2026-02-05T21:32:35.000000Z","user":{"id":10,"name":"Hildegard Lindgren","user rol":"customer"}}}'
+        content: '{"data":{"id":18,"body":"Et animi quos velit et fugiat. Nihil accusantium harum mollitia modi deserunt. Ab provident perspiciatis quo omnis nostrum aut adipisci.","created_at":"2026-02-05T21:43:36.000000Z","user":{"id":11,"name":"Vivien Considine","user rol":"customer"}}}'
         headers: []
         description: ''
       -
