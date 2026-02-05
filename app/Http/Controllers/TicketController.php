@@ -97,8 +97,8 @@ class TicketController extends Controller
      *
      * @bodyParam title string required El título del ticket. Example: "Mi impresora no funciona"
      * @bodyParam priority string required Prioridad del ticket. Valores permitidos: low, medium, high, urgent. Example: "high"
-     * @bodyParam labels array required Etiquetas asociadas al ticket. Example: ["hardware", "impresora"]
-     * @bodyParam labels.* string required Nombre de la etiqueta. Example: "hardware"
+     * @bodyParam labels array required Etiquetas asociadas al ticket. Example: ["bug", "feature"]
+     * @bodyParam labels.* string required Nombre de la etiqueta. Example: "bug"
      * @bodyParam files array optional Archivos adjuntos. Example: [archivo1.png, archivo2.pdf]
      * @bodyParam files.* file optional Archivo adjunto (png, jpeg, jpg, pdf, docx, xlsx, máx 10MB)
      *
@@ -155,40 +155,16 @@ class TicketController extends Controller
      *
      * Devuelve la información detallada de un ticket, incluyendo archivos, etiquetas, respuestas y usuarios relacionados.
      *
-     * @group Tickets
+     * @group Gestión de Tickets
      * @authenticated
      *
      * Recupera la información de un ticket específico junto con su hilo de respuestas.
      *
-     * @urlParam ticket int required El ID del ticket a mostrar. Example: 1
+     * @urlParam ticket integer required El ID del ticket.
+     * @apiResource App\Http\Resources\TicketResource
+     * @apiResourceModel App\Models\Ticket
      *
-     * @response 200 scenario="Ticket encontrado" {
-     *   "data": {
-     *     "id": 1,
-     *     "title": "Mi impresora no funciona",
-     *     "priority": "high",
-     *     "status": "open",
-     *     "customer": {
-     *       "id": 5,
-     *       "name": "Juan Pérez"
-     *     },
-     *     "agent": null,
-     *     "answers": [
-     *       {
-     *         "id": 10,
-     *         "body": "¿Has intentado reiniciar la impresora?",
-     *         "user": {
-     *           "id": 2,
-     *           "name": "Agente Soporte",
-     *           "rol": "agent"
-     *         },
-     *         "files": []
-     *       }
-     *     ],
-     *     "files": [],
-     *     "labels": ["hardware", "impresora"]
-     *   }
-     * }
+     *
      *
      * @response 403 scenario="No autorizado" {
      *   "message": "This action is unauthorized."
@@ -198,15 +174,7 @@ class TicketController extends Controller
      *   "message": "No query results for model [App\\Models\\Ticket] 9999"
      * }
      *
-     * @responseField id int ID del ticket
-     * @responseField title string Título del ticket
-     * @responseField priority string Prioridad del ticket
-     * @responseField status string Estado del ticket
-     * @responseField customer object Información del cliente
-     * @responseField agent object Información del agente asignado
-     * @responseField answers array Respuestas del ticket
-     * @responseField files array Archivos adjuntos
-     * @responseField labels array Etiquetas asociadas
+     *
      */
     public function show(Ticket $ticket)
     {

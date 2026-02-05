@@ -28,7 +28,20 @@ class AnswerController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Crear una respuesta.
+     *
+     * Almacena una nueva respuesta asociada a un ticket específico.
+     *
+     * @group Gestión de Tickets
+     * @authenticated
+     *
+     * @urlParam ticket integer required El ID del ticket al que pertenece la respuesta.
+     * @bodyParam body string required El contenido de la respuesta. Example: "He revisado el caso y necesitamos más información."
+     * @bodyParam files array optional Archivos adjuntos. Example: [archivo1.png]
+     * @bodyParam files.* file optional Archivo adjunto (png, jpeg, jpg, pdf, docx, xlsx, máx 10MB).
+     *
+     * @apiResource App\Http\Resources\AnswerResource
+     * @apiResourceModel App\Models\Answer
      */
     public function store(StoreAnswerRequest $request, Ticket $ticket, CreateAnswerService $service)
     {
@@ -60,7 +73,29 @@ class AnswerController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * Actualizar una respuesta.
+     *
+     * Actualiza el contenido de una respuesta existente. Solo el autor puede editarla.
+     *
+     * @group Gestión de Tickets
+     * @authenticated
+     *
+     * @urlParam ticket integer required El ID del ticket.
+     * @urlParam answer integer required El ID de la respuesta.
+     * @bodyParam body string required El contenido actualizado. Example: "Corrección: El problema persiste."
+     * @bodyParam files array optional Archivos adjuntos.
+     * @bodyParam files.* file optional Archivo adjunto.
+     *
+     * @apiResource App\Http\Resources\AnswerResource
+     * @apiResourceModel App\Models\Answer
+     *
+     * @response 403 scenario="No autorizado" {
+     *   "message": "This action is unauthorized."
+     * }
+     *
+     * @response 404 scenario="No encontrado" {
+     *   "message": "No query results for model [App\\Models\\Answer]"
+     * }
      */
     public function update(UpdateAnswerRequest $request, Ticket $ticket, Answer $answer, UpdateAnswerService $service)
     {

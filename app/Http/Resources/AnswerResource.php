@@ -25,7 +25,7 @@ class AnswerResource extends JsonResource
                 'name' => $this->user->name,
                 'user rol' => $this->user->rol->name,
             ],
-            'files' => FileResource::collection($this->files),
+            'files' => FileResource::collection($this->whenLoaded('files')),
         ];
     }
 }
