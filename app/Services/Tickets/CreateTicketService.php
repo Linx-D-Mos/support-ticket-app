@@ -1,17 +1,21 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\Tickets;
 
 use App\DTOs\CreateTicketDTO;
 use App\Enums\Status;
 use App\Events\TicketCreated;
 use App\Models\Label;
 use App\Models\Ticket;
+use App\Services\FileService;
 use Exception;
 use Illuminate\Support\Facades\DB;
 
 class CreateTicketService
 {
+    public function __construct(
+        protected FileService $fileService
+    ) {}
     public function createTicket(CreateTicketDTO $dto): Ticket
     {
         $ticket = DB::transaction(
@@ -23,22 +27,14 @@ class CreateTicketService
                     'status' => Status::OPEN,
                 ]);
 
-                // if ($dto->files) {
-                //     foreach ($dto->files as $file) {
-                //         $path = $file->store('tickets/attachments', 'public');
-                //         $ticket->files()->create(['file_path' => $path]);
-                //     }
-                // }
-                $service = app(FileService::class);
-                $ticket = $service->storeFile($ticket,$dto->files);
-
-                return $ticket['files'];
+                $ticket = $this->fileService->storeFile($ticket, $dto->files);
+                return $ticket->load('files');
             }
         );
         if (! $ticket) {
             throw new Exception('klk');
         }
         TicketCreated::dispatch($ticket);
-        return $ticket->load('labels','files');
+        return $ticket->load('labels', 'files');
     }
 }

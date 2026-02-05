@@ -12,11 +12,11 @@ use App\Http\Requests\UpdateTicketRequest;
 use App\Http\Resources\TicketResource;
 use App\Http\Resources\TicketThreadResource;
 use App\Models\Ticket;
-use App\Services\AddAgentService;
-use App\Services\AssignAgentService;
-use App\Services\CreateTicketService;
-use App\Services\RestoreTicketService;
-use App\Services\UpdateTicketService;
+use App\Services\Tickets\AddAgentService;
+use App\Services\Tickets\AssignAgentService;
+use App\Services\Tickets\CreateTicketService;
+use App\Services\Tickets\RestoreTicketService;
+use App\Services\Tickets\UpdateTicketService;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -271,15 +271,16 @@ class TicketController extends Controller
         $this->authorize('update', $ticket);
         $validated = $request->validated();
         $files = $request->file('files');
+        $user = $request->user();
         $dto = new UpdateTicketDTO(
             ticket_id: $ticket->id,
-            user_id: $request->user()->id,
+            user_id: $user->id,
             title: $validated['title'] ?? $ticket->title,
             priority: $validated['priority'] ?? $ticket->priority->value,
             labels: $validated['labels'] ?? null,
             files: $files ?? null,
         );
-        $ticket = $service->updateTicket($dto);
+        $ticket = $service->updateTicket($dto, $user);
         return (new TicketResource($ticket))
         ->additional(['message' => 'Ticket actualizado con exito'])
         ->response()

@@ -9,8 +9,8 @@ use App\Http\Requests\UpdateAnswerRequest;
 use App\Http\Resources\AnswerResource;
 use App\Models\Answer;
 use App\Models\Ticket;
-use App\Services\CreateAnswerService;
-use App\Services\UpdateAnswerService;
+use App\Services\Answers\CreateAnswerService;
+use App\Services\Answers\UpdateAnswerService;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -35,15 +35,15 @@ class AnswerController extends Controller
         // Correcto
         $this->authorize('create', [Answer::class, $ticket]);
         $validated = $request->validated();
-        $user = $request->user()->id;
+        $user = $request->user();
         $files = $request->file('files');
         $dto = new CreateAnswerDTO(
             ticket_id: $ticket->id,
-            user_id: $user,
+            user_id: $user->id,
             body: $validated['body'],
             files: $files,
         );
-        $answer = $service->CreateAnswer($dto);
+        $answer = $service->CreateAnswer($dto, $ticket, $user);
         $ticket->update(['last_reply_at' => now()]);
         return (new AnswerResource($answer))
             ->additional(['message' => '¡Respuesta creada con éxito!'])

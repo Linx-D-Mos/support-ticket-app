@@ -810,3 +810,23 @@ He decidido extender el Proyecto 3 para reforzar las bases y convertir los conoc
 **"Asegurar que la api sea consumible por una IA o un Frontend Real"**
     * *Estandarización Json: Respuestas de error y éxito uniformes.
     * * Preparaicón para Docker/Railway: Revisar variables de entorno y configuraciones para despliegue en Free Tier.
+
+Fecha: [05-02-2026] Estado: Rate Limiting y Blindaje de API completado.
+
+1. Rate Limiting (Limitación de Frecuencia) 🛡️
+
+Concepto: Aprendí a proteger la API contra abusos (fuerza bruta o scripts) limitando el número de peticiones por usuario o IP [cite: 30-01-2026].
+
+Implementación:
+
+Definición en AppServiceProvider usando RateLimiter::for [cite: 30-01-2026].
+
+Uso de Limit::perMinute(60)->by(...) para identificar al usuario por su ID o IP [cite: 30-01-2026].
+
+Aplicación en rutas mediante el middleware throttle:api [cite: 30-01-2026].
+
+Testing: Creé un test que simula un "ataque" con 100 peticiones seguidas, verificando que la petición 61 devuelva un error 429 Too Many Requests [cite: 20-01-2026].
+
+2. Estandarización de Respuestas 🧬
+
+Global Exception Handling: Configuré bootstrap/app.php para capturar errores de modelo no encontrado (404) y devolver JSON en lugar de HTML [cite: 04-02-2026].

@@ -9,7 +9,9 @@ use App\Models\File;
 use App\Models\Ticket;
 use App\Models\User;
 use App\Observers\AuditObserver;
-use Illuminate\Support\Facades\Event;
+use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Http\Request;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -31,5 +33,8 @@ class AppServiceProvider extends ServiceProvider
         Answer::observe(AuditObserver::class);
         File::observe(AuditObserver::class);
         User::observe(AuditObserver::class);
+        RateLimiter::for('api', function(Request $request){
+            return Limit::perMinute(60)->by($request->user()?->id ?: $request->ip());
+        });
     }
 }

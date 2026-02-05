@@ -11,7 +11,7 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
-Route::middleware(['auth:sanctum'])->group(function () {
+Route::middleware(['auth:sanctum','throttle:api'])->group(function () {
 
     Route::patch('tickets/{id}/restore', [TicketController::class,'restore']);
     Route::put('tickets/{ticket}/assign', [TicketController::class,'assign']);

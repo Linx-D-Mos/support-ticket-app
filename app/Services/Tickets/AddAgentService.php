@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\Tickets;
 
 use App\Enums\RolEnum;
 use App\Enums\Status;
