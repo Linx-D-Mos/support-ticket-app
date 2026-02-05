@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AnswerController;
+use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\DashboardController;
 use App\Http\Controllers\FileController;
 use App\Http\Controllers\TicketController;
@@ -11,16 +12,21 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
-Route::middleware(['auth:sanctum','throttle:api'])->group(function () {
+Route::post('/login', [AuthController::class, 'login']);
+Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
 
-    Route::patch('tickets/{id}/restore', [TicketController::class,'restore']);
-    Route::put('tickets/{ticket}/assign', [TicketController::class,'assign']);
+    Route::get('/agents', function () {
+        // Retorna solo ID y Nombre de los agentes para el dropdown
+        return \App\Models\User::where('role', 'agent')->get(['id', 'name']);
+    });
+    Route::patch('tickets/{id}/restore', [TicketController::class, 'restore']);
+    Route::put('tickets/{ticket}/assign', [TicketController::class, 'assign']);
     Route::patch('tickets/{ticket}/resolve', [TicketController::class, 'resolve']);
     Route::patch('tickets/{ticket}/close', [TicketController::class, 'close']);
     Route::post('/tickets/{ticket}/addAgent', [TicketController::class, 'addAgent']);
     Route::apiResource('tickets', TicketController::class);
 
-    Route::apiResource('tickets.answers', AnswerController::class)->only(['store', 'update','destroy']);
+    Route::apiResource('tickets.answers', AnswerController::class)->only(['store', 'update', 'destroy']);
     Route::get('/dashboard/stats', [DashboardController::class, 'stats']);
 
     Route::get('/{file}/download', [FileController::class, 'download']);
