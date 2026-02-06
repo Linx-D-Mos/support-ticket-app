@@ -80,4 +80,17 @@ class User extends Authenticatable
         return $this->rol()->where('name', $role)->exists();
         // return $this->rol?->name === $role;
     }
+
+    public function scopeRol($query, ?string $rol){
+        if($rol){
+            $query->whereHas('rol', fn($q)=> 
+            $q->where('name', $rol));
+        }
+    }
+    public function scopeName($query, ?string $name){
+        if($name){
+            $query->where('name', 'ILIKE', "%{$name}%");
+        }
+    }
+    
 }

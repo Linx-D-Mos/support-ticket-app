@@ -28,7 +28,10 @@ class AssignAgentService
                 throw new Exception('El usuario seleccionado no tiene el rol de agente.');
             }
 
-            $ticket->update(['agent_id' => $agent->id]);
+            $ticket->update([
+                'agent_id' => $agent->id,
+                'status' => Status::INPROGRESS,
+            ]);
             TicketAgentReassigned::dispatch($ticket);
             return $ticket;
         });

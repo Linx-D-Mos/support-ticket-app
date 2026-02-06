@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Enums\Priority;
 use App\Enums\Status;
 use App\Traits\HasTimeWindow;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -88,5 +89,18 @@ class Ticket extends Model
                 $q->where('title', 'ILIKE', "%{$term}%");
             });
         }
+    }
+    public function scopeGetTicketsAdmin(Builder $query): Builder
+    {
+        return $query->with(['files', 'labels', 'user', 'agent']);
+    }
+    public function scopeGetTicketsAgent($query, User $agent): Builder
+    {
+        return $query->where('agent_id', $agent->id)
+            ->orWhere('status', Status::OPEN);
+    }
+    public function scopeGetTicketsCustomer($query, User $customer): Builder
+    {
+        return $query->where('user_id', $customer->id);
     }
 }

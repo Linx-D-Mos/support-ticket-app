@@ -78,9 +78,9 @@ class FilePolicy
     {
         $parentModel = $file->fileable;
 
-        if($user->id !== $parentModel->user_id || ($user->id !== $parentModel->agent_id && !$user->hasRole(RolEnum::ADMIN))){
-            return Response::deny('Este archivo no te pertenece');
+        if($user->id === $parentModel->user_id || ($user->id === $parentModel->agent_id || $user->hasRole(RolEnum::ADMIN))){
+            return Response::allow();
         }
-        return Response::allow();
+         return Response::deny('Este archivo no te pertenece');
     }
 }

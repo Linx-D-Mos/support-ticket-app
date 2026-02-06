@@ -78,7 +78,7 @@ class TicketPolicy
      */
     public function restore(User $user): Response
     {
-        if(!($user->hasRole(RolEnum::ADMIN))){
+        if (!($user->hasRole(RolEnum::ADMIN))) {
             return Response::deny('No tienes autorización para acceder a esta funcionalidad');
         }
         return Response::allow();
@@ -111,10 +111,6 @@ class TicketPolicy
     }
     public function close(User $user, ticket $ticket): Response
     {
-        if (!($ticket->user_id === $user->id || $user->hasRole(RolEnum::ADMIN))) {
-            return Response::deny('No tienes autorización para acceder a esta funcionalidad');
-        }
-
         if ($ticket->hasStatus(Status::CLOSED)) {
             return Response::deny('Este ticket ya se encuentra cerrado.');
         }
@@ -122,8 +118,10 @@ class TicketPolicy
         if (!$ticket->hasStatus(Status::RESOLVED)) {
             return Response::deny('Solo puedes cerrar tickets que hayan sido marcados como resueltos previamente.');
         }
-
-        return Response::allow();
+        if ($user->hasRole(RolEnum::ADMIN) || $ticket->user_id === $user->id) {
+            return Response::allow();
+        }
+        return Response::deny('No tienes autorización para acceder a esta funcionalidad');
     }
     public function assign(User $user, ticket $ticket): Response
     {
@@ -136,6 +134,7 @@ class TicketPolicy
     {
         return ($ticket->user_id === $user->id)
             || $user->hasRole(RolEnum::ADMIN)
-            || ($ticket->agent_id === $user->id);
+            || ($ticket->agent_id === $user->id)
+            || ($ticket->hasStatus(Status::OPEN) && $user->hasRole(RolEnum::AGENT));
     }
 }

@@ -15,6 +15,7 @@ use App\Models\Ticket;
 use App\Services\Tickets\AddAgentService;
 use App\Services\Tickets\AssignAgentService;
 use App\Services\Tickets\CreateTicketService;
+use App\Services\Tickets\GetTicketsService;
 use App\Services\Tickets\RestoreTicketService;
 use App\Services\Tickets\UpdateTicketService;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
@@ -76,14 +77,20 @@ class TicketController extends Controller
      *   }
      * }
      */
-    public function index(Request $request)
+    public function index(Request $request, GetTicketsService $service)
     {
-        $tickets = Ticket::with(['files', 'labels', 'user', 'agent'])
-        ->status($request->query('status'))
-        ->priority($request->query('priority'))
-        ->search($request->query('search'))
-        ->latest()
-        ->paginate(10);
+        // $tickets = Ticket::with(['files', 'labels', 'user', 'agent'])
+        // ->status($request->query('status'))
+        // ->priority($request->query('priority'))
+        // ->search($request->query('search'))
+        // ->latest()
+        // ->paginate(10);
+        $this->authorize('ViewAny', Ticket::class);
+        //Asi funciona pero queda horroroso
+        // $filtros= ['status' => $request->query('status'), 'priority' => $request->query('priority'),'search' => $request->query('search')];
+        $filtros = $request->only('status','priority','search');
+        $tickets = $service->getTickets($request->user(), $filtros);
+        
         return (TicketResource::collection($tickets));
     }
 
