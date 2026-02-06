@@ -9,13 +9,15 @@ use App\Models\Ticket;
 use App\Models\User;
 use App\Notifications\TicketUpdatedNotification;
 use App\Services\FileService;
+use App\Services\NotificationService;
 use Exception;
 use Illuminate\Support\Facades\DB;
 
 class UpdateTicketService
 {
     public function __construct(
-        protected FileService $fileService
+        protected FileService $fileService,
+        protected NotificationService $notificationService
     ) {}
     public function updateTicket(UpdateTicketDTO $dto, User $user)
     {
@@ -47,7 +49,13 @@ class UpdateTicketService
         if (!$ticket) {
             throw new Exception('Ocurro un error en la actualización de esta ticket');
         }
-        $this->sendNotification($ticket, $user);
+
+        $this->notificationService->sendNotification(
+            $ticket, 
+            $user, 
+            new TicketUpdatedNotification($ticket, $user)
+        );
+
         return $ticket->load('labels', 'user', 'agent');
     }
     public function validateTicket(Ticket $ticket, User $user)
@@ -57,29 +65,5 @@ class UpdateTicketService
             return true;
         }
         return ($ticket->created_at->diffInMinutes(now())) <= 10;
-    }
-    public function sendNotification(Ticket $ticket, User $user)
-    {
-        $recipient = null;
-        if ($user->id === $ticket->user_id) {
-            if ($ticket->agent_id) {
-                $recipient = User::find($ticket->agent_id);
-            }
-        } else {
-            $recipient = User::find($ticket->user_id);
-        }
-        //Caso 3 fallback: Si después de lo anterior nadie va a recibir la notificación buscamos a un administrador
-        if (! $recipient) {
-            $recipient = User::whereHas(
-                'rol',
-                fn($q) =>
-                $q->where('name', RolEnum::ADMIN)
-            )->inRandomOrder()
-                ->first();
-        }
-        if ($recipient && $recipient->id !== $user->id) {
-            //Recipient es el que recibe la notificación y $user es el que realiza la acción.
-            $recipient->notify(new TicketUpdatedNotification($ticket, $user));
-        }
     }
 }

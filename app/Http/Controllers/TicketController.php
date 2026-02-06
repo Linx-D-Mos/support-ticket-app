@@ -14,8 +14,10 @@ use App\Http\Resources\TicketThreadResource;
 use App\Models\Ticket;
 use App\Services\Tickets\AddAgentService;
 use App\Services\Tickets\AssignAgentService;
+use App\Services\Tickets\CloseTicketService;
 use App\Services\Tickets\CreateTicketService;
 use App\Services\Tickets\GetTicketsService;
+use App\Services\Tickets\ResolveTicketService;
 use App\Services\Tickets\RestoreTicketService;
 use App\Services\Tickets\UpdateTicketService;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
@@ -77,17 +79,10 @@ class TicketController extends Controller
      *   }
      * }
      */
-    public function index(Request $request, GetTicketsService $service)
+    public function index(Request $request,GetTicketsService $service)
     {
-        // $tickets = Ticket::with(['files', 'labels', 'user', 'agent'])
-        // ->status($request->query('status'))
-        // ->priority($request->query('priority'))
-        // ->search($request->query('search'))
-        // ->latest()
-        // ->paginate(10);
         $this->authorize('ViewAny', Ticket::class);
-        //Asi funciona pero queda horroroso
-        // $filtros= ['status' => $request->query('status'), 'priority' => $request->query('priority'),'search' => $request->query('search')];
+
         $filtros = $request->only('status','priority','search');
         $tickets = $service->getTickets($request->user(), $filtros);
         
@@ -416,16 +411,12 @@ class TicketController extends Controller
      * @responseField status string Estado del ticket
      * @responseField resolve_at string Fecha de resolución
      */
-    public function resolve(Ticket $ticket)
+    public function resolve(Request $request,Ticket $ticket, ResolveTicketService $service)
     {
         $this->authorize('resolve', $ticket);
-        $ticket->update(
-            [
-                'status' => Status::RESOLVED,
-                'resolve_at' => now(),
-            ]
-        );
-        return (new TicketResource($ticket->load('labels', 'files', 'user', 'agent')))
+        $user = $request->user();
+        $ticket = $service->resolveTicket($ticket,$user);
+        return (new TicketResource($ticket))
             ->additional(['message' => '¡Ticket resuelto con exito!'])
             ->response()
             ->setStatusCode(Response::HTTP_OK);
@@ -473,15 +464,11 @@ class TicketController extends Controller
      * @responseField status string Estado del ticket
      * @responseField close_at string Fecha de cierre
      */
-    public function close(Ticket $ticket)
+    public function close(Request $request,Ticket $ticket, CloseTicketService $service)
     {
         $this->authorize('close', $ticket);
-        $ticket->update(
-            [
-                'status' => Status::CLOSED,
-                'close_at' => now(),
-            ]
-        );
+        $user = $request->user();
+        $ticket = $service->closeTicket($ticket,$user );
         return (new TicketResource($ticket->load('labels', 'files', 'user', 'agent')))
             ->additional(['message' => '¡Ticket cerrado con exito!'])
             ->response()

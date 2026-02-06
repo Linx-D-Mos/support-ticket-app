@@ -98,8 +98,11 @@ class TicketPolicy
     public function resolve(User $user, ticket $ticket): Response
     {
         // No se puede resolver algo que ya terminó su ciclo
-        if ($ticket->hasStatus(Status::RESOLVED) || $ticket->hasStatus(Status::CLOSED)) {
-            return Response::deny('Este ticket ya se encuentra resuelto o cerrado.');
+        if ($ticket->hasStatus(Status::RESOLVED) ) {
+            return Response::deny('Este ticket ya se encuentra resuelto.');
+        }
+        if($ticket->hasStatus(Status::CLOSED)){
+            return Response::deny('Este ticket se encuentra cerrado.');
         }
 
         // Solo el agente asignado o el administrador pueden resolver
