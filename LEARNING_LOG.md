@@ -830,3 +830,32 @@ Testing: Creé un test que simula un "ataque" con 100 peticiones seguidas, verif
 2. Estandarización de Respuestas 🧬
 
 Global Exception Handling: Configuré bootstrap/app.php para capturar errores de modelo no encontrado (404) y devolver JSON en lugar de HTML [cite: 04-02-2026].
+
+## 🏁 Hito Completado: Estabilización del Core (MVP)
+**Fecha:** 09 de Febrero, 2026
+**Estado:** ✅ Core Funcional (~80%)
+
+### 📝 Resumen del Progreso
+Se ha finalizado la estabilización de la arquitectura base **Laravel API + Vue.js Frontend**. El sistema ahora permite el ciclo de vida completo de un ticket con reglas de negocio y permisos (ACL) funcionales.
+
+### 🛠️ Correcciones Críticas Implementadas
+1.  **Sincronización de Estructuras de Datos (Data Shape):**
+    * Se estandarizó la respuesta de `UserResource` para incluir relaciones anidadas (`user.rol.name`).
+    * Se ajustó `Pinia AuthStore` para leer correctamente los roles y calcular permisos (`isAdmin`, `isAgent`).
+2.  **Lógica de Asignación de Agentes:**
+    * **Backend:** Corrección de colisión de nombres en Eloquent Scopes (`scopeAll` -> `scopeByRole`).
+    * **Frontend:** Implementación de lógica condicional en la UI: Dropdown para Admins vs. Botón "Tomar Ticket" para Agentes.
+    * **Routing:** Resolución de error `405 Method Not Allowed` separando verbos HTTP (`PUT` para asignar, `POST` para auto-asignar).
+3.  **Políticas de Acceso (Policies):**
+    * Se corrigieron los `Gate::denies` que impedían a los agentes resolver sus propios tickets.
+
+### 🐛 Deuda Técnica Conocida (Pospuesta)
+* UI de Edición de Tickets y Respuestas (Botones presentes pero inactivos).
+* Eliminación definitiva de tickets (Soft Deletes pendientes de UI).
+
+### 🎯 Próximo Objetivo: Real-Time Communication
+Inicio de la **Fase 2**: Implementación de **WebSockets** para transformar la experiencia de usuario de "Polling" a "Event-Driven".
+* **Tecnologías:** Laravel Reverb (Backend) + Laravel Echo / Pusher-JS (Frontend).
+* **Casos de Uso:**
+    1.  Notificación instantánea de nuevo ticket a los agentes.
+    2.  Actualización de respuestas en el chat sin recargar la página.
