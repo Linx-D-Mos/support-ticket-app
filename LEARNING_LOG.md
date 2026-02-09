@@ -859,3 +859,70 @@ Inicio de la **Fase 2**: Implementación de **WebSockets** para transformar la e
 * **Casos de Uso:**
     1.  Notificación instantánea de nuevo ticket a los agentes.
     2.  Actualización de respuestas en el chat sin recargar la página.
+
+## 📡 Instalación de Laravel Reverb
+
+Laravel Broadcasting es un sistema que nos permite integrar interfaces de tiempo real y en vivo en nuestra aplicación usando WebSockets. Esto nos permite crear un canal de eventos en el lado del servidor hacia el lado de JavaScript de nuestro cliente, permitiéndonos funcionalidades como notificaciones en tiempo real, aplicaciones de chats y dashboards dinámicos sin requerir refrescar la página.
+
+### 1. Instalar Broadcasting
+Ejecuta el siguiente comando:
+```bash
+sail artisan install:broadcasting
+```
+Esto preguntará automáticamente si deseas instalar **Laravel Reverb**, a lo cual debemos aceptar.
+
+### 2. Actualizar archivo `.env`
+```env
+BROADCAST_CONNECTION=reverb
+QUEUE_CONNECTION=redis
+```
+
+### 3. Configurar Redis
+```env
+CACHE_STORE=redis
+QUEUE_CONNECTION=redis
+REDIS_HOST=redis
+REDIS_PORT=6379
+```
+
+### 4. Prueba de funcionamiento con Tinker
+Realizamos una prueba en Tinker para comprobar que la conexión a la caché/redis sea correcta:
+```bash
+sail artisan tinker
+```
+```php
+Cache::put('key', 10);
+// > true
+Cache::get('key');
+// > 10
+```
+Con esto, la configuración base está lista.
+
+---
+
+## 🗺️ Hoja de Ruta: Implementación de WebSockets (Real-Time Helpdesk)
+
+### Fase 1: Fundamentos y el "Canal Público" 📢
+*   **Tarea:** Crear el evento `TestEvent` y transmitirlo por un canal público.
+*   **Descripción:** Aprenderás a usar la interfaz `ShouldBroadcast` y verás cómo un evento de PHP "viaja" hasta las herramientas de desarrollo del navegador sin restricciones.
+*   **Criterio de Aceptación:** Ver el mensaje JSON del evento en la consola de Reverb y en el cliente de prueba (o consola del navegador) sin necesidad de login.
+
+### Fase 2: Seguridad y Canales Privados 🔒
+*   **Tarea:** Implementar un canal privado basado en el ID del usuario.
+*   **Descripción:** Aprenderás a configurar `routes/channels.php`. Solo el usuario autenticado podrá escuchar sus propios mensajes. Es aquí donde aplicamos la lógica de "Este ticket es mío".
+*   **Criterio de Aceptación:** El frontend intenta conectarse y Laravel devuelve un error 403 si el usuario no tiene permiso, y un 200 si es el dueño del canal.
+
+### Fase 3: Notificación Global para Admins (New Ticket) 🎫
+*   **Tarea:** Notificar en tiempo real a todos los administradores cuando entre un ticket `Open`.
+*   **Descripción:** Pondrás en práctica los canales privados con roles. Solo los usuarios con `role: admin` deben recibir la señal para actualizar su contador de tickets pendientes.
+*   **Criterio de Aceptación:** Crear un ticket desde una ventana de incógnito (como cliente) y ver cómo aparece la notificación instantánea en la sesión del Admin.
+
+### Fase 4: Indicadores de Actividad (Typing...) ✍️
+*   **Tarea:** Implementar "El agente está escribiendo una respuesta".
+*   **Descripción:** Usarás Whisper (Client Events). Son eventos rápidos que no pasan por la base de datos, optimizando el rendimiento para interacciones fugaces.
+*   **Criterio de Aceptación:** El cliente ve un texto dinámico que desaparece cuando el agente deja de escribir por más de 3 segundos.
+
+### Fase 5: Hilo de Respuestas en Vivo y Presence Channels 👥
+*   **Tarea:** Actualizar el chat del ticket automáticamente y mostrar quién está conectado.
+*   **Descripción:** La tarea más compleja. Usarás Presence Channels para saber si el cliente y el agente están viendo el mismo ticket al mismo tiempo.
+*   **Criterio de Aceptación:** Al enviar una respuesta, esta aparece en la pantalla de la otra persona sin recargar, y ambos ven un indicador de "En línea".
