@@ -71,8 +71,8 @@ class User extends Authenticatable
     }
     public function audits(): MorphMany
     {
-        return $this->morphMany(Audit::class,'auditable');
-    } 
+        return $this->morphMany(Audit::class, 'auditable');
+    }
 
     //Helper Method
     public function hasRole(RolEnum $role): bool
@@ -80,17 +80,30 @@ class User extends Authenticatable
         return $this->rol()->where('name', $role)->exists();
         // return $this->rol?->name === $role;
     }
-
-    public function scopeRol($query, ?string $rol){
-        if($rol){
-            $query->whereHas('rol', fn($q)=> 
+    public function isAdmin(): bool
+    {
+        // Asumiendo que tienes la relación 'rol' cargada o usas Spatie Permissions
+        return $this->rol->name === RolEnum::ADMIN;
+    }
+    public function isAgent(): bool
+    {
+        return $this->rol->name === RolEnum::AGENT;
+    }
+    public function isCustomer(): bool
+    {
+        return $this->rol->name === RolEnum::CUSTOMER;
+    }
+    public function scopeRol($query, ?string $rol)
+    {
+        if ($rol) {
+            $query->whereHas('rol', fn($q) =>
             $q->where('name', $rol));
         }
     }
-    public function scopeName($query, ?string $name){
-        if($name){
+    public function scopeName($query, ?string $name)
+    {
+        if ($name) {
             $query->where('name', 'ILIKE', "%{$name}%");
         }
     }
-    
 }

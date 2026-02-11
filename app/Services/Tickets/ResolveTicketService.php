@@ -3,6 +3,7 @@
 namespace App\Services\Tickets;
 
 use App\Enums\Status;
+use App\Events\TicketResolved;
 use App\Models\Ticket;
 use App\Models\User;
 use App\Notifications\ResolveTicketNotification;
@@ -21,7 +22,9 @@ class ResolveTicketService
             'status' => Status::RESOLVED,
             'resolved_at' => Carbon::now()
         ]);
-        $this->service->sendNotification($ticket, $user, new ResolveTicketNotification($ticket, $user));
+
+        TicketResolved::dispatch($ticket->load('user','agent'), $user);
+        // $this->service->sendNotification($ticket, $user, new ResolveTicketNotification($ticket, $user));
         return $ticket->load('labels', 'files', 'user', 'agent');
     }
 }

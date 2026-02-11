@@ -4,6 +4,7 @@ namespace App\Services\Tickets;
 
 
 use App\Enums\Status;
+use App\Events\TicketClose;
 use App\Models\Ticket;
 use App\Notifications\CloseTicketNotification;
 use App\Models\User;
@@ -24,6 +25,7 @@ Class CloseTicketService{
             'status' => Status::CLOSED,
             'closed_at' => Carbon::now(),
         ]);
+        TicketClose::dispatch($ticket->load('user','agent'), $user);
         $this->notification->sendNotification($ticket,$user, new CloseTicketNotification($ticket,$user));
         return $ticket->load('files', 'agent', 'user','labels');
     }
