@@ -1,13 +1,11 @@
 <?php
 
-namespace App\Events;
+namespace App\Events\Answers;
 
 use App\Models\Answer;
-use Illuminate\Broadcasting\Channel;
+use App\Models\User;
 use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Broadcasting\PrivateChannel;
-use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
@@ -33,7 +31,7 @@ class AnswerCreated
     public function broadcastOn(): array
     {
         return [
-            new PrivateChannel('channel-name'),
+            // new PrivateChannel('channel-name'),
         ];
     }
 }

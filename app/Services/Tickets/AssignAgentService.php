@@ -17,7 +17,7 @@ class AssignAgentService
         $ticket = DB::transaction(function () use ($ticket, $agent_id) {
             // En lugar de solo $ticket->lockForUpdate();
             //ponemos la busqueda del ticket para asegurarnos que todos sus datos esten completos
-            $ticket = Ticket::with('user','agent')->where('id', $ticket->id)->lockForUpdate()->firstOrFail();
+            $ticket = Ticket::with('user', 'agent', 'labels', 'answers')->where('id', $ticket->id)->lockForUpdate()->firstOrFail();
 
             if ($this->ticketValidation($ticket)) {
                 throw new Exception('No se puede reasignar un ticket que está cerrado.');
@@ -27,7 +27,7 @@ class AssignAgentService
             if (! $this->rolValidation($agent)) {
                 throw new Exception('El usuario seleccionado no tiene el rol de agente.');
             }
-            if(! $this->agentValidation($agent, $ticket)){
+            if ($this->agentValidation($agent, $ticket)) {
                 throw new Exception('El agente ya se encuentra asignado a este ticket.');
             }
 
@@ -35,10 +35,10 @@ class AssignAgentService
                 'agent_id' => $agent->id,
                 'status' => Status::INPROGRESS,
             ]);
-            
-            return $ticket->load('user','agent','labels','answers');
+
+            return $ticket->load('user', 'agent', 'labels', 'answers');
         });
-        if(! $ticket){
+        if (! $ticket) {
             throw new Exception('Falló en la asignación del agente');
         }
         //Cuando usamos un evento con listener que use ShouldQueue es obligatorio cargar las relaciones necesarias
@@ -58,7 +58,12 @@ class AssignAgentService
     {
         return $agent->rol()->where('name', RolEnum::AGENT)->exists();
     }
-    public function agentValidation(User $agent, Ticket $ticket){
-        return $ticket->agent->id !== $agent->id;
+    public function agentValidation(User $agent, Ticket $ticket)
+    {
+
+        if (!$ticket->agent_id) {
+            return false ;
+        }
+        return $ticket->agent_id === $agent->id;
     }
 }

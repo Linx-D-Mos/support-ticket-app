@@ -56,7 +56,7 @@ class AnswerController extends Controller
             body: $validated['body'],
             files: $files,
         );
-        $answer = $service->CreateAnswer($dto, $ticket, $user);
+        $answer = $service->CreateAnswer($dto);
         $ticket->update(['last_reply_at' => now()]);
         return (new AnswerResource($answer))
             ->additional(['message' => '¡Respuesta creada con éxito!'])

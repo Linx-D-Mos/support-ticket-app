@@ -7,6 +7,7 @@ use App\Models\Ticket;
 use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Notifications\Messages\BroadcastMessage;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
@@ -18,9 +19,7 @@ class AnswerTicketNotification extends Notification implements ShouldQueue
      * Create a new notification instance.
      */
     public function __construct(
-        public Ticket $ticket,
         public Answer $answer,
-        public User $user,
     ) {}
 
     /**
@@ -30,7 +29,7 @@ class AnswerTicketNotification extends Notification implements ShouldQueue
      */
     public function via(object $notifiable): array
     {
-        return ['mail', 'database'];
+        return ['mail', 'database','broadcast'];
     }
 
     /**
@@ -40,9 +39,9 @@ class AnswerTicketNotification extends Notification implements ShouldQueue
     {
         return (new MailMessage)
             ->greeting("Saludos, {$notifiable->name}")
-            ->line("Se ha registrado una nueva respuesta en el ticket #{$this->ticket->id} ")
-            ->line("Por parte del usuario: {$this->user->name}")
-            ->action('Respuesta creada', url("/api/tickets/{$this->ticket->id}/answers/{$this->answer->id}"))
+            ->line("Se ha registrado una nueva respuesta en el ticket #{$this->answer->ticket->id} ")
+            ->line("Por parte del usuario: {$this->answer->user->name}")
+            ->action('Respuesta creada', url("/tickets/{$this->answer->ticket->id}/answers/{$this->answer->id}"))
             ->line('Thank you for using our application!');
     }
 
@@ -54,10 +53,23 @@ class AnswerTicketNotification extends Notification implements ShouldQueue
     public function toArray(object $notifiable): array
     {
         return [
-            'ticket_id' => $this->ticket->id,
+            'ticket_id' => $this->answer->ticket->id,
+            'answer_id' => $this->answer->id,
             'answer' => $this->answer->body,
-            'message' => "El usuario {$this->user->name} respondio al ticket {$this->ticket->id}",
-            'action_url' => "/api/tickets/{$this->ticket->id}/answers/{$this->answer->id}",
+            'title' => "¡Nueva respuesta en el ticket #{$this->answer->ticket->id}!",
+            'message' => "El usuario {$this->answer->user->name} respondio al ticket {$this->answer->ticket->id}",
+            'action_url' => "/tickets/{$this->answer->ticket->id}/answers/{$this->answer->id}",
         ];
+    }
+    public function toBroadcast(object $notifiable): BroadcastMessage
+    {
+        return new BroadcastMessage([
+            'id' => $this->id,
+            'ticket_id' => $this->answer->ticket->id,
+            'answer_id' => $this->answer->id,
+            'title' => "¡Nueva respuesta en el ticket #{$this->answer->ticket->id}!",
+            'message' => "El usuario {$this->answer->user->name} respondio al ticket {$this->answer->ticket->id}",
+            'link' => "/tickets/{$this->answer->ticket->id}/answers/{$this->answer->id}",
+        ]);
     }
 }
