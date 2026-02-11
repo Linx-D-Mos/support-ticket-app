@@ -12,6 +12,7 @@ use App\Http\Requests\UpdateTicketRequest;
 use App\Http\Resources\TicketResource;
 use App\Http\Resources\TicketThreadResource;
 use App\Models\Ticket;
+use App\Models\User;
 use App\Services\Tickets\AddAgentService;
 use App\Services\Tickets\AssignAgentService;
 use App\Services\Tickets\CloseTicketService;
@@ -134,16 +135,16 @@ class TicketController extends Controller
     public function store(StoreTicketRequest $request, CreateTicketService $service)
     {
         $validated = $request->validated();
-        $user_id = $request->user()->id;
+        $user = $request->user();
         $files = $request->file('files');
         $dto = new CreateTicketDTO(
             title: $validated['title'],
-            userId: $user_id,
+            userId: $user->id,
             priority: $validated['priority'],
             files: $files,
             labels: $validated['labels']
         );
-        $ticket = $service->createTicket($dto);
+        $ticket = $service->createTicket($dto, $user);
         $ticket->load('files', 'labels', 'user');
         return (new TicketResource($ticket))
             ->additional(['message' => '¡Ticket creado con exito!'])

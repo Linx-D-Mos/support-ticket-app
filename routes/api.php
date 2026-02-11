@@ -3,6 +3,7 @@
 use App\Http\Controllers\AnswerController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\DashboardController;
+use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\FileController;
 use App\Http\Controllers\TicketController;
 use App\Http\Controllers\UserController;
@@ -16,10 +17,7 @@ Route::get('/user', function (Request $request) {
 Route::post('/login', [AuthController::class, 'login']);
 Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
 
-    Route::get('/agents', function () {
-        // Retorna solo ID y Nombre de los agentes para el dropdown
-        return \App\Models\User::where('role', 'agent')->get(['id', 'name']);
-    });
+
     Route::patch('tickets/{id}/restore', [TicketController::class, 'restore']);
     Route::put('tickets/{ticket}/assign', [TicketController::class, 'assign']);
     Route::patch('tickets/{ticket}/resolve', [TicketController::class, 'resolve']);
@@ -30,6 +28,12 @@ Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
     Route::apiResource('tickets.answers', AnswerController::class)->only(['store', 'update', 'destroy']);
     Route::get('/dashboard/stats', [DashboardController::class, 'stats']);
 
+    //Archivos
     Route::get('/files/{file}/download', [FileController::class, 'download']);
     Route::apiResource('files', FileController::class)->only('destroy');
+
+    //Notificaciones
+    Route::get('/notifications', [NotificationController::class,'index']);
+    Route::patch('/notifications/{id}/read', [NotificationController::class,'markAsRead']);
+    Route::post('notifications/mark-all-read', [NotificationController::class, 'markAllAsRead']);
 });

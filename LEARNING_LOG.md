@@ -926,3 +926,35 @@ Con esto, la configuración base está lista.
 *   **Tarea:** Actualizar el chat del ticket automáticamente y mostrar quién está conectado.
 *   **Descripción:** La tarea más compleja. Usarás Presence Channels para saber si el cliente y el agente están viendo el mismo ticket al mismo tiempo.
 *   **Criterio de Aceptación:** Al enviar una respuesta, esta aparece en la pantalla de la otra persona sin recargar, y ambos ven un indicador de "En línea".
+
+## 📅 [09-02-2026] - Fase 1: Fundamentos de WebSockets Completado
+
+### 📡 Dominio de Laravel Reverb y Canales Públicos
+- **Arquitectura Real-Time:** Logré conectar el flujo completo: Tinker -> Redis -> Queue Worker -> Reverb -> Navegador (Echo).
+- **El "Queue Trap":** Entendí que con `ShouldBroadcast`, el evento no llega al socket si el worker no está procesando la cola. 
+- **Configuración de Red en Docker:** Aprendí a mapear el puerto `8080` en el `docker-compose.yml` para permitir la entrada de conexiones WebSocket al contenedor de Sail.
+- **Depuración:** Uso de `sail artisan reverb:start --debug` para visualizar el tráfico de mensajes entrantes y salientes.
+
+### 💡 Concepto Clave:
+El servidor de WebSockets es como una llamada telefónica permanente. Mientras que HTTP cuelga después de cada respuesta, el WS mantiene la línea abierta, permitiendo que el servidor "llame" al cliente cuando hay datos nuevos.
+
+## 📅 [09-02-2026] - Fase 2: Canales Privados y Seguridad Completada
+
+### 🔒 Autorización de WebSockets
+- **Private Channels:** Implementé `PrivateChannel` para asegurar que los datos sensibles solo lleguen al destinatario correcto.
+- **Broadcast Authorization:** Aprendí a usar `routes/channels.php` para definir reglas de acceso basadas en el objeto `$user` autenticado.
+- **Integración Blade/JS:** Resolví la sincronización de IDs entre el backend y el frontend usando directivas de Blade para inyectar variables en JavaScript de forma segura.
+
+## 📅 [10-02-2026] - Depuración de Autorización (403 Forbidden)
+
+### 🔑 Autenticación en Broadast
+- **Error 403:** Comprendí que este error ocurre cuando el servidor recibe la petición de suscripción pero la rechaza, ya sea por falta de Token o por lógica de canal fallida [cite: 09-02-2026].
+- **CORS vs Auth:** Diferencié que el error de CORS bloquea la conexión antes de llegar a Laravel, mientras que el 403 es una respuesta directa de la lógica de Laravel [cite: 09-02-2026].
+- **Headers en Echo:** Aprendí la importancia de enviar el `Authorization: Bearer` manualmente cuando el frontend y el backend corren en puertos distintos [cite: 04-02-2026].
+
+## 📅 [10-02-2026] - Autenticación Stateless en WebSockets
+
+### 🔐 Desafíos de Sanctum + Reverb
+- **Guard Specification:** Aprendí que en canales privados, Laravel por defecto busca una sesión de cookie. Si uso Tokens, debo especificar el guard `sanctum` en `routes/channels.php` [cite: 09-02-2026].
+- **Auth Flow:** Entendí que el proceso es: 1. El cliente envía el token al endpoint `auth`. 2. Laravel valida el token. 3. Si es válido, ejecuta la lógica del canal (el closure) [cite: 09-02-2026].
+- **Debugging de Headers:** La pestaña 'Network' es mi mejor amiga para confirmar que el frontend realmente está enviando el token al servidor de Sockets [cite: 04-02-2026].

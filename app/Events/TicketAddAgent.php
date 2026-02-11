@@ -5,12 +5,10 @@ namespace App\Events;
 use App\Models\Ticket;
 use App\Models\User;
 use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Broadcasting\PrivateChannel;
-use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class TicketCreated implements ShouldBroadcast
+class TicketAddAgent
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
@@ -18,10 +16,10 @@ class TicketCreated implements ShouldBroadcast
      * Create a new event instance.
      */
     public function __construct(
-        public Ticket $ticket, public User $user
+       public Ticket $ticket
     )
     {
-        
+        //
     }
 
     /**
@@ -32,14 +30,7 @@ class TicketCreated implements ShouldBroadcast
     public function broadcastOn(): array
     {
         return [
-            // new PrivateChannel('admins'),
-        ];
-    }
-    public function broadcastWith(): array
-    {
-        return[
-            // 'content' => $this->ticket,
-            // 'timestamp' => now()->toDateTimeString(),
+            // new PrivateChannel('channel-name'),
         ];
     }
 }

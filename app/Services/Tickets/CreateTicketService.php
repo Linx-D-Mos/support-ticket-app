@@ -7,6 +7,7 @@ use App\Enums\Status;
 use App\Events\TicketCreated;
 use App\Models\Label;
 use App\Models\Ticket;
+use App\Models\User;
 use App\Services\FileService;
 use Exception;
 use Illuminate\Support\Facades\DB;
@@ -16,7 +17,7 @@ class CreateTicketService
     public function __construct(
         protected FileService $fileService
     ) {}
-    public function createTicket(CreateTicketDTO $dto): Ticket
+    public function createTicket(CreateTicketDTO $dto, User $user): Ticket
     {
         $ticket = DB::transaction(
             function () use ($dto) {
@@ -34,7 +35,7 @@ class CreateTicketService
         if (! $ticket) {
             throw new Exception('klk');
         }
-        TicketCreated::dispatch($ticket);
+        TicketCreated::dispatch($ticket->load('user'), $user);
         return $ticket->load('labels', 'files');
     }
 }
