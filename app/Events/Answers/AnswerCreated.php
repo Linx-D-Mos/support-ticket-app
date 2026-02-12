@@ -18,7 +18,7 @@ class AnswerCreated
      */
     public function __construct(
         public Answer $answer
-    )
+    )  
     {
         
     }

@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Broadcast;
 use App\Enums\RolEnum;
+use App\Models\Ticket;
 use Illuminate\Support\Facades\Log;
 
 /*
@@ -24,6 +25,29 @@ Broadcast::channel('admins', function ($user) {
     return (bool) $user->hasRole(RolEnum::ADMIN);
 }, ['guards' => ['sanctum']]);
 
-Broadcast::channel('customers', function($user){
+Broadcast::channel('customers', function ($user) {
     return (bool) $user->hasRole(RolEnum::CUSTOMER);
+}, ['guards' => ['sanctum']]);
+
+Broadcast::channel('ticket.{ticket}', function ($user, Ticket $ticket) {
+    $isOwner = (int) $user->id === (int) $ticket->user_id;
+    $isAssignedAgent = (int) $user->id === (int) $ticket->agent_id;
+    $isAdmin = $user->isAdmin();
+
+    return $isOwner || $isAssignedAgent || $isAdmin;
+}, ['guards' => ['sanctum']]);
+
+Broadcast::channel('ticket.{ticket}', function ($user, Ticket $ticket) {
+    $isAdmin = $user->isAdmin();
+    $isOwner = (int) $user->id === (int) $ticket->user_id;
+    $isAgent = (int) $user->id === (int) $ticket->agent_id;
+
+    if ($isAdmin || $isOwner || $isAgent) {
+        return [
+            'id' => $user->id,
+            'name' => $user->name,
+            'rol' => $user->rol->name
+        ];
+    }
+    return false;
 }, ['guards' => ['sanctum']]);

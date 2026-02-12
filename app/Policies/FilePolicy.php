@@ -81,6 +81,9 @@ class FilePolicy
         if($user->id === $parentModel->user_id || ($user->id === $parentModel->agent_id || $user->hasRole(RolEnum::ADMIN))){
             return Response::allow();
         }
+        if($parentModel->ticket->user_id === $user->id || $parentModel->ticket->agent_id === $user->id){
+            return Response::allow();
+        }
          return Response::deny('Este archivo no te pertenece');
     }
 }

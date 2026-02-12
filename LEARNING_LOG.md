@@ -971,3 +971,10 @@ El servidor de WebSockets es como una llamada telefónica permanente. Mientras q
 ### 🛠️ Mejores Prácticas Aplicadas
 * **Paridad de Datos:** Comprendí que las claves de los arrays en `toArray` y `toBroadcast` deben ser idénticas (`link` vs `action_url`) para que el Frontend sea agnóstico a la fuente del dato (DB o WS).
 * **Event Dispatching:** Confirmé que los eventos deben dispararse siempre fuera de las transacciones de BD para evitar falsos positivos en las notificaciones.
+
+## 📅 [12-02-2026] - Serialización de Modelos y WebSockets
+
+### 🧬 El ciclo de vida de un Evento en Cola
+* **Efecto SerializesModels:** Entendí que este trait optimiza el almacenamiento en colas guardando solo el ID del modelo [cite: 09-02-2026].
+* **Pérdida de Relaciones:** Aprendí que al recuperar un modelo de la cola, las relaciones cargadas previamente se pierden. Debo usar `loadMissing()` dentro del evento para recuperarlas antes del broadcast [cite: 09-02-2026].
+* **Consistencia de Eager Loading:** Es mejor cargar las relaciones una vez el registro está confirmado fuera de la transacción para asegurar que todos los servicios y eventos compartan el mismo estado del objeto [cite: 27-01-2026, 09-02-2026].
