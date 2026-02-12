@@ -958,3 +958,5 @@ El servidor de WebSockets es como una llamada telefónica permanente. Mientras q
 - **Guard Specification:** Aprendí que en canales privados, Laravel por defecto busca una sesión de cookie. Si uso Tokens, debo especificar el guard `sanctum` en `routes/channels.php` [cite: 09-02-2026].
 - **Auth Flow:** Entendí que el proceso es: 1. El cliente envía el token al endpoint `auth`. 2. Laravel valida el token. 3. Si es válido, ejecuta la lógica del canal (el closure) [cite: 09-02-2026].
 - **Debugging de Headers:** La pestaña 'Network' es mi mejor amiga para confirmar que el frontend realmente está enviando el token al servidor de Sockets [cite: 04-02-2026].
+
+"Entendí que las Notificaciones son para humanos (alertas persistentes) y los Broadcast Events son para la sincronización de la interfaz (UI reactivity) [cite: 09-02-2026, 04-02-2026]. El backend 'avisa' y el frontend 'reacciona' [cite: 09-02-2026]."

@@ -58,7 +58,7 @@ class AnswerTicketNotification extends Notification implements ShouldQueue
             'answer' => $this->answer->body,
             'title' => "¡Nueva respuesta en el ticket #{$this->answer->ticket->id}!",
             'message' => "El usuario {$this->answer->user->name} respondio al ticket {$this->answer->ticket->id}",
-            'action_url' => "/tickets/{$this->answer->ticket->id}/answers/{$this->answer->id}",
+            'link' => "/tickets/{$this->answer->ticket->id}/answers/{$this->answer->id}",
         ];
     }
     public function toBroadcast(object $notifiable): BroadcastMessage

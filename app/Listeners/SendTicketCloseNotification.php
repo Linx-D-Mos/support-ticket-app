@@ -24,9 +24,9 @@ class SendTicketCloseNotification
     public function handle(TicketClose $event): void
     {
         $event->ticket->loadMissing('user','agent');
-        $recipients = collect([$event->ticket->user]);
+        $recipients = collect([$event->ticket->agent]);
         if($event->user->isAdmin()){
-            $recipients->push($event->ticket->agent());
+            $recipients->push($event->ticket->user);
         }
         $recipients = $recipients->filter();
 
