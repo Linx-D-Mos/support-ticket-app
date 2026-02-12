@@ -960,3 +960,14 @@ El servidor de WebSockets es como una llamada telefónica permanente. Mientras q
 - **Debugging de Headers:** La pestaña 'Network' es mi mejor amiga para confirmar que el frontend realmente está enviando el token al servidor de Sockets [cite: 04-02-2026].
 
 "Entendí que las Notificaciones son para humanos (alertas persistentes) y los Broadcast Events son para la sincronización de la interfaz (UI reactivity) [cite: 09-02-2026, 04-02-2026]. El backend 'avisa' y el frontend 'reacciona' [cite: 09-02-2026]."
+
+## 📅 [12-02-2026] - Arquitectura Reactiva y Optimización de Relaciones
+
+### 🚀 Conceptos Dominados
+* **Carga Anidada (Nested Eager Loading):** Aprendí a usar la sintaxis de punto (`modelo.relacion`) para traer datos de tercer nivel en una sola consulta, evitando el problema de N+1.
+* **loadMissing vs load:** Entendí que `loadMissing` es la forma "educada" y eficiente de pedir datos; solo consulta la BD si la relación no ha sido cargada previamente, optimizando el rendimiento del Listener.
+* **Lógica de Destinatario Dinámica:** Implementé un flujo donde el sistema detecta quién es el emisor para decidir quién debe ser el receptor (Cliente ↔ Agente), con un fallback automático a Administradores.
+
+### 🛠️ Mejores Prácticas Aplicadas
+* **Paridad de Datos:** Comprendí que las claves de los arrays en `toArray` y `toBroadcast` deben ser idénticas (`link` vs `action_url`) para que el Frontend sea agnóstico a la fuente del dato (DB o WS).
+* **Event Dispatching:** Confirmé que los eventos deben dispararse siempre fuera de las transacciones de BD para evitar falsos positivos en las notificaciones.
