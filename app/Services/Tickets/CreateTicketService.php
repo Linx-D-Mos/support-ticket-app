@@ -5,6 +5,7 @@ namespace App\Services\Tickets;
 use App\DTOs\CreateTicketDTO;
 use App\Enums\Status;
 use App\Events\TicketCreated;
+use App\Events\TicketCreatedBroadcast;
 use App\Models\Label;
 use App\Models\Ticket;
 use App\Models\User;
@@ -27,15 +28,22 @@ class CreateTicketService
                     'priority' => $dto->priority,
                     'status' => Status::OPEN,
                 ]);
+                
+                // Sincronizamos las etiquetas si vienen en el DTO
+                if ($dto->labels) {
+                    $labelIds = Label::whereIn('name', $dto->labels)->pluck('id');
+                    $ticket->labels()->sync($labelIds);
+                }
 
                 $ticket = $this->fileService->storeFile($ticket, $dto->files);
-                return $ticket->load('files');
+                return $ticket->load(['files', 'labels','user','agent','answers']);
             }
         );
         if (! $ticket) {
-            throw new Exception('klk');
+            throw new Exception('No se pudo crear el ticket correctamente');
         }
-        TicketCreated::dispatch($ticket->load('user'), $user);
-        return $ticket->load('labels', 'files');
+        TicketCreated::dispatch($ticket, $user);
+        broadcast(new TicketCreatedBroadcast($ticket));
+        return $ticket;
     }
 }

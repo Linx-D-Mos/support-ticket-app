@@ -978,3 +978,17 @@ El servidor de WebSockets es como una llamada telefónica permanente. Mientras q
 * **Efecto SerializesModels:** Entendí que este trait optimiza el almacenamiento en colas guardando solo el ID del modelo [cite: 09-02-2026].
 * **Pérdida de Relaciones:** Aprendí que al recuperar un modelo de la cola, las relaciones cargadas previamente se pierden. Debo usar `loadMissing()` dentro del evento para recuperarlas antes del broadcast [cite: 09-02-2026].
 * **Consistencia de Eager Loading:** Es mejor cargar las relaciones una vez el registro está confirmado fuera de la transacción para asegurar que todos los servicios y eventos compartan el mismo estado del objeto [cite: 27-01-2026, 09-02-2026].
+
+Este es el resumen de lo que acabas de construir con esta nueva arquitectura:
+
+Unificación de Canales: Aprendí que el Presence Channel es el "hermano mayor" de los canales. Si necesito saber quién está conectado, uso .join() y ahí mismo puedo escuchar eventos privados [cite: 09-02-2026].
+
+Gestión de Estado de Presencia:
+
+here: Carga inicial de la "sala".
+
+joining: Alerta de entrada.
+
+leaving: Alerta de salida.
+
+Whispering (Susurros): Es comunicación de baja latencia entre clientes. No pasa por la base de datos, lo que ahorra recursos del servidor para información que caduca en segundos (como el "está escribiendo") [cite: 09-02-2026].

@@ -5,6 +5,7 @@ namespace App\Services\Tickets;
 use App\Enums\RolEnum;
 use App\Enums\Status;
 use App\Events\TicketAgentReassigned;
+use App\Events\TicketUpdated;
 use App\Models\Ticket;
 use App\Models\User;
 use Exception;
@@ -44,6 +45,7 @@ class AssignAgentService
         //Cuando usamos un evento con listener que use ShouldQueue es obligatorio cargar las relaciones necesarias
         //implicadas en el proceso.
         TicketAgentReassigned::dispatch($ticket);
+        TicketUpdated::dispatch($ticket);
         return $ticket;
     }
     public function ticketValidation(Ticket $ticket)

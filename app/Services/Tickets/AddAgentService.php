@@ -5,6 +5,7 @@ namespace App\Services\Tickets;
 use App\Enums\RolEnum;
 use App\Enums\Status;
 use App\Events\TicketAddAgent;
+use App\Events\TicketUpdated;
 use App\Models\Ticket;
 use App\Models\User;
 use Exception;
@@ -16,7 +17,7 @@ class AddAgentService
     {
         $ticket = DB::transaction(function () use ($ticket, $agent) {
             //Esto se asegura que realmente tengamos el ticket actualizado en cuanto a sus datos e información
-            $ticket = Ticket::with('user','answers','labels')->where('id', $ticket->id)->lockForUpdate()->firstOrFail();
+            $ticket = Ticket::with(['user','answers','labels'])->where('id', $ticket->id)->lockForUpdate()->firstOrFail();
             if ($this->ticketValidation($ticket)) {
                 throw new Exception('No le puedes asignar un agente a este ticket');
             }
@@ -32,12 +33,13 @@ class AddAgentService
                 'agent_id' => $agent->id,
                 'status' => Status::INPROGRESS,
             ]);
-            return $ticket->load('agent', 'user', 'labels', 'answers');
+            return $ticket->load(['agent', 'user', 'labels', 'answers']);
         });
         if(! $ticket){
             throw new Exception('El agente no se pudo asignar...');
         }
         TicketAddAgent::dispatch($ticket);
+        TicketUpdated::dispatch($ticket);
         return $ticket;
     }
     public function ticketValidation(Ticket $ticket)
