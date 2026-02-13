@@ -30,7 +30,7 @@ Broadcast::channel('customers', function ($user) {
 
 Broadcast::channel('agent', function ($user){
     return (bool) $user->isAgent();
-}, ['guardas' => ['sanctum']]);
+}, ['guards' => ['sanctum']]);
 
 Broadcast::channel('admin-agent', function ($user) {
     // Verificamos el rol y casteamos a booleano explícito;
@@ -40,8 +40,7 @@ Broadcast::channel('admin-agent', function ($user) {
 Broadcast::channel('tickets', function($user){
     $isAdmin = $user->isAdmin();
     $isAgent = $user->isAgent();
-    $isCustomer = $user->isCustomer();
-    return $isAdmin || $isAgent || $isCustomer;
+    return $isAdmin || $isAgent;
 }, ['guards' => ['sanctum']]);
 
 //Canal de presencia y para mensajes 
@@ -60,17 +59,3 @@ Broadcast::channel('ticket.{ticket}', function ($user, Ticket $ticket) {
     return false;
 }, ['guards' => ['sanctum']]);
 
-// Broadcast::channel('ticket.{ticket}', function ($user, Ticket $ticket) {
-//     $isAdmin = $user->isAdmin();
-//     $isOwner = (int) $user->id === (int) $ticket->user_id;
-//     $isAgent = (int) $user->id === (int) $ticket->agent_id;
-
-//     if ($isAdmin || $isOwner || $isAgent) {
-//         return [
-//             'id' => $user->id,
-//             'name' => $user->name,
-//             'rol' => $user->rol->name
-//         ];
-//     }
-//     return false;
-// }, ['guards' => ['sanctum']]);

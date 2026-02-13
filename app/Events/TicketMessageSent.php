@@ -46,7 +46,7 @@ class TicketMessageSent implements ShouldBroadcast
             'body' => $this->answer->body,
             'sender_id' => $this->answer->user_id,
             'sender_name' => $this->answer->user->name,
-            'sender_rol' => $this->answer->user->rol->name,
+            'sender_rol' => $this->answer->user->rol->name->value,
             'created_at' => $this->answer->created_at->toISOString(),
             'files' => $this->answer->files ?? [],
         ];

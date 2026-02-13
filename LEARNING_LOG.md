@@ -992,3 +992,54 @@ joining: Alerta de entrada.
 leaving: Alerta de salida.
 
 Whispering (Susurros): Es comunicación de baja latencia entre clientes. No pasa por la base de datos, lo que ahorra recursos del servidor para información que caduca en segundos (como el "está escribiendo") [cite: 09-02-2026].
+
+📘 LEARNING LOG: Arquitectura de WebSockets en Laravel
+Aquí tienes tu bitácora de aprendizaje. Has pasado de "hacer que funcione" a entender los flujos de datos complejos.
+
+📅 [13-02-2026] - Dominio de Eventos y Tiempo Real
+1. Arquitectura de Canales (The Plumbing)
+Privacidad Granular: Aprendí a configurar routes/channels.php usando Broadcast::channel. Entendí que devolver true/false crea un canal Privado (acceso sí/no), mientras que devolver un array crea un canal de Presencia (quién está).
+
+Separación de Audiencias: Implementé canales separados para diferentes propósitos:
+
+ticket.{id}: Para el detalle y chat (contexto específico).
+
+tickets-index / admin-agent: Para la tabla general (contexto global).
+
+App.Models.User.{id}: Para notificaciones dirigidas a una persona específica.
+
+2. Eventos y Serialización (The Data Flow)
+ShouldBroadcast: Entendí que esta interfaz es el interruptor que le dice a Laravel: "No te quedes esto en el servidor, mándalo a Reverb".
+
+El Problema de las Colas (Queue Serialization): Aprendí que Laravel serializa los modelos perdiendo sus relaciones cargadas (user, agent).
+
+Solución loadMissing: Apliqué loadMissing() dentro del método broadcastWith() para rehidratar el modelo justo antes de enviarlo, asegurando que el JSON llegue completo al frontend.
+
+Resources en Eventos: Descubrí que puedo usar TicketResource dentro de broadcastWith() para mantener la estructura de datos consistente entre mi API REST y mis WebSockets.
+
+3. Frontend Reactivo (The Consumer)
+Escucha Selectiva: Aprendí a usar echo.private().listen() para reaccionar a eventos del servidor.
+
+Manipulación de Estado (State Management):
+
+Usé unshift para agregar elementos al inicio (chats nuevos, tickets nuevos).
+
+Usé splice y findIndex para actualizar o remover elementos de una lista sin recargar la página.
+
+Lógica Condicional: Implementé lógica en el cliente (isAssignedToMe) para decidir si mostrar o ocultar datos en tiempo real (aunque anoté la deuda técnica de seguridad sobre esto).
+
+4. UX Avanzada (The Polish)
+Whisper Events: Implementé "Susurros" (.whisper / .listenForWhisper) para funciones efímeras como "Escribiendo...", evitando llamadas innecesarias a la base de datos.
+
+Scroll Inteligente: Usé nextTick de Vue para manipular el DOM (scroll) solo después de que los datos reactivos se hayan renderizado visualmente.
+
+Presence Channel: Logré mostrar avatares de "Usuarios en línea" usando los hooks .here, .joining y .leaving.
+
+🚦 Semáforo de Estado Actual
+🟢 WebSockets: Funcionando (Chat y Actualizaciones).
+
+🟢 Notificaciones: Funcionando (Email y Database).
+
+🟡 Seguridad de Datos: Funcional, pero con "Over-fetching" en canales globales (lo que discutimos arriba).
+
+🔴 Unificación de Canales: Pendiente (Se decidió mantener separado por estabilidad).

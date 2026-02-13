@@ -23,21 +23,8 @@ class DatabaseSeeder extends Seeder
         $this->call(LabelSeeder::class);
         User::factory(1)->admin()->create(['email' => 'admin@test.com']);
         User::factory(1)->agent()->create(['email' => 'agent@test.com']);
+        User::factory(1)->agent()->create(['email' => 'agent2@test.com']);
         User::factory(1)->customer()->create(['email' => 'customer@test.com']);
-        // $customerRolId = Rol::where('name', RolEnum::CUSTOMER->value)->firstOrFail()->id;
-        // $agentRolId = Rol::where('name', RolEnum::AGENT->value)->firstOrFail()->id;
-        // $customer = User::factory()->create([
-        //     'rol_id' => $customerRolId,
-        // ]);
-        // $agent = User::factory()->create([
-        //     'rol_id' => $agentRolId,
-        // ]);
-        // $ticket = Ticket::factory()->create([
-        //     'user_id' => $customer->id,
-        // ]);
-        // $labels = Label::all();
-        // $ticket->update(['agent_id' => $agent->id]);
-        // $ticket->labels()->attach($labels->random(rand(1, 3)));
-        // $ticket->files()->save(File::make(['file_path' => fake()->url()]));
+        User::factory(1)->customer()->create(['email' => 'customer2@test.com']);
     }
 }
