@@ -32,7 +32,6 @@ class SendTicketCreateNotification implements ShouldQueue
             whereIn('name', [RolEnum::ADMIN, RolEnum::AGENT]))
             ->get();
 
-
         Notification::send($recipients, new NewTicketNotification($event->ticket));
     }
 }

@@ -32,7 +32,7 @@ class TicketCreatedBroadcast implements ShouldBroadcast
     public function broadcastOn(): array
     {
         return [
-            new PrivateChannel('tickets-index'),
+            new PrivateChannel('admin-agent'),
         ];
     }
     public function broadcastWith(): array

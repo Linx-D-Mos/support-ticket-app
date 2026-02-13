@@ -2,6 +2,7 @@
 
 namespace App\Events;
 
+use App\Http\Resources\TicketResource;
 use App\Models\Ticket;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
@@ -20,8 +21,7 @@ class TicketUpdated implements ShouldBroadcast
      */
     public function __construct(
         public Ticket $ticket
-    )
-    {
+    ) {
         //
     }
 
@@ -32,14 +32,13 @@ class TicketUpdated implements ShouldBroadcast
      */
     public function broadcastOn(): array
     {
-        return [
-            new PrivateChannel("ticket.{$this->ticket->id}"),
-        ];
+
+        return [new PrivateChannel("tickets")];
     }
     public function broadcastWith(): array
     {
-        return[
-            'ticket' => $this->ticket->load(['agent','user','labels','files'])
+        return [
+            'ticket' => (new TicketResource($this->ticket))->resolve()
         ];
     }
 }
