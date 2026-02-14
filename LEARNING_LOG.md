@@ -1043,3 +1043,43 @@ Presence Channel: Logré mostrar avatares de "Usuarios en línea" usando los hoo
 🟡 Seguridad de Datos: Funcional, pero con "Over-fetching" en canales globales (lo que discutimos arriba).
 
 🔴 Unificación de Canales: Pendiente (Se decidió mantener separado por estabilidad).
+
+
+  📚 MASTER LEARNING LOG: WebSockets & Real-Time Architecture
+1. Comunicación en Tiempo Real (Chat & Messaging)
+✅ Envío de Mensajes: Enviar texto del servidor al cliente instantáneamente.
+
+✅ Adjuntos en Tiempo Real: Enviar archivos y que aparezcan sin recargar.
+
+✅ Indicadores de Escritura (Whisper): "Agente está escribiendo...".
+
+✅ Presencia de Usuarios: Saber quién está conectado al ticket (.here, .joining).
+
+⬜ Lectura de Mensajes (Read Receipts): Marcar "Visto" (doble check azul) cuando el usuario tiene el chat abierto. Concepto: Eventos de susurro o actualización de estado en BD.
+
+⬜ Indicador de "Visto por última vez": Mostrar cuándo fue la última vez que el agente/cliente abrió el ticket.
+
+2. Sincronización de Estado (Reactive UI)
+✅ Actualización de Badges: Cambiar estado/prioridad en tiempo real.
+
+✅ Listas Vivas (Global): Que aparezcan nuevos tickets en la tabla del admin.
+
+⬜ Bloqueo de Recursos (Mutex / Soft Locking): Si el Agente A entra al ticket, mostrar un aviso al Agente B: "Este ticket está siendo revisado por A" y bloquear el input para evitar colisiones. (Nivel Pro)
+
+⬜ Contadores en Vivo: Que el contador del Sidebar ("Abiertos: 5") baje a 4 si alguien cierra uno, sin recargar la página.
+
+3. Notificaciones y Alertas (System-Wide)
+✅ Notificaciones Toast: Avisos flotantes cuando ocurre algo.
+
+✅ Notificaciones Database: Guardar en BD y mostrar campanita.
+
+⬜ Notificaciones Push (Web Push): Que la notificación llegue al navegador/móvil incluso si la pestaña está cerrada (Usando Service Workers + FCM).
+
+⬜ Alertas del Sistema (Global Broadcast): Un canal público para anunciar: "Mantenimiento en 5 minutos" o "Nueva versión desplegada, refresca".
+
+4. Seguridad y ACL (Access Control List)
+🟡 Autorización de Canales: (Lo tenemos, pero mejorable). Validar quién entra a qué sala.
+
+⬜ Targeted Broadcasting (Tu próxima meta): Enviar eventos solo al usuario afectado (Unicasting), en lugar de gritarle a todos y filtrar en el front.
+
+⬜ Expulsión Remota (Remote Kick): Si le quitas el permiso a un agente, el socket se desconecta y lo saca de la página automáticamente.
